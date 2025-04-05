@@ -5,6 +5,7 @@ import InquirySection from '@/components/home/InquirySection/InquirySection';
 import RecommendSection from '@/components/home/RecommendSection/Recommend';
 import RegionSection from '@/components/home/RegionSection/RegionSection';
 import ServiceSection from '@/components/home/ServiceSection/ServiceSection';
+import NewsletterSection from '@/components/resuable/Newsletter';
 import React from 'react'
 
 const HomePage = () => {
@@ -39,6 +40,7 @@ const HomePage = () => {
             <RecommendSection />
             <ServiceSection />
             <RegionSection />
+            <NewsletterSection />
         </div>
     )
 }
