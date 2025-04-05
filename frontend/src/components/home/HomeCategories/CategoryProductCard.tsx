@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { CatProd } from '@/interfaces/CatProd'
 const CategoryProductCard = ({ catProduct }: { catProduct: CatProd }) => {
     return (
         <div className="bg-white p-5 border rounded-lg shadow-sm hover:shadow-md transition flex flex-col justify-between relative h-36">
