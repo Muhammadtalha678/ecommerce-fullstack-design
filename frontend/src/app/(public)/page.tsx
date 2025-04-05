@@ -7,6 +7,7 @@ const HomePage = () => {
         <div>
             <HeroSection />
             <DealsSection />
+
         </div>
     )
 }

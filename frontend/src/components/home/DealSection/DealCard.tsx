@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { Deal } from '@/interfaces/Deal'
 const DealCard = ({ dealProduct }: { dealProduct: Deal }) => {
     return (
         <div className="p-4 bg-white border rounded-lg text-center shadow-md hover:shadow-lg transition duration-300 w-full">
