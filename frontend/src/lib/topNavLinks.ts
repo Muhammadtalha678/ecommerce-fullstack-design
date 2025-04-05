@@ -1,4 +1,4 @@
-import { FaUser, FaComment, FaHeart, FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUser, FaComment, FaHeart, FaShoppingCart } from 'react-icons/fa';
 
 export const topNavLink = [
     { name: 'Profile', path: '/profile', icons: FaUser },
