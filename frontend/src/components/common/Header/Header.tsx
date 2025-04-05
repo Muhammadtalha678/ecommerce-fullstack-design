@@ -65,7 +65,7 @@ export default function Header() {
                     {
                         topNavLink.map((nav, index) => {
                             return <div key={index + 1} className="flex items-center gap-2 mt-2">
-                                <nav.icons />
+                                <nav.icons color='#8B96A5' />
                                 <span className='custom-font-regular text-[12px] text-[#8B96A5]'>{nav.name}</span>
                             </div>
                         })
