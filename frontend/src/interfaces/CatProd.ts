@@ -1,4 +1,4 @@
-interface CatProd {
+export interface CatProd {
     name: string,
     price: string,
     image: string

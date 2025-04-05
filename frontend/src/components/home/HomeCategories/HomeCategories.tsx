@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import CategoryProductCard from './CategoryProductCard';
 import Button from '@/components/resuable/Button';
+import { CatProd } from '@/interfaces/CatProd';
 
 const CategorySection = ({ catProds, bannerImage, bannerTitle }: {
     catProds: CatProd[], bannerImage: string,
