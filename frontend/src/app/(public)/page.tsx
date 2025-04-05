@@ -3,6 +3,8 @@ import HeroSection from '@/components/home/HeroSection/HeroSection'
 import CategorySection from '@/components/home/HomeCategories/HomeCategories';
 import InquirySection from '@/components/home/InquirySection/InquirySection';
 import RecommendSection from '@/components/home/RecommendSection/Recommend';
+import RegionSection from '@/components/home/RegionSection/RegionSection';
+import ServiceSection from '@/components/home/ServiceSection/ServiceSection';
 import React from 'react'
 
 const HomePage = () => {
@@ -35,6 +37,8 @@ const HomePage = () => {
             <CategorySection catProds={category2_products} bannerImage="/images/categor2-banner.png" bannerTitle="Consumer electronics and gadgets" />
             <InquirySection />
             <RecommendSection />
+            <ServiceSection />
+            <RegionSection />
         </div>
     )
 }
