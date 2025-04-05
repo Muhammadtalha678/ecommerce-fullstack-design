@@ -5,7 +5,7 @@ import Timer from './Timer';
 const DealsSection = () => {
 
     const products = [
-        { name: 'Smart watches', discount: '-25%', image: '/images/deal-5.jpg' },
+        { name: 'Smart watches', discount: '-25%', image: '/images/cat16.jpg' },
         { name: 'Laptops', discount: '-25%', image: '/images/deal-4.jpg' },
         { name: 'GoPro cameras', discount: '-40%', image: '/images/deal-3.jpg' },
         { name: 'Headphones', discount: '-15%', image: '/images/deal-2.jpg' },
