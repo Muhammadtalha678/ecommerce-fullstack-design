@@ -1,4 +1,4 @@
-import DealsSection from '@/components/home/HeroSection/DealSection/DealSection'
+import DealsSection from '@/components/home/DealSection/DealSection'
 import HeroSection from '@/components/home/HeroSection/HeroSection'
 import React from 'react'
 
