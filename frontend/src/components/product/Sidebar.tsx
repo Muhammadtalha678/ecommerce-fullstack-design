@@ -30,22 +30,26 @@ const Sidebar2 = ({ onClose, isOpen }: { onClose: () => void, isOpen: boolean })
     return (
         <>
             {/* Mobile Sidebar */}
-            <div className={`fixed top-0 left-0 z-50 h-full w-64 sm:w-80 bg-white shadow-lg overflow-y-auto transform transition-transform duration-300 ease-in-out p-6 lg:hidden
-            ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed top-0 left-0 z-50 w-64 sm:w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col
+  ${isOpen ? 'translate-x-0' : '-translate-x-full'}`} style={{ height: '100vh' }}>
 
-                {/* Close Button */}
-                <div className='flex justify-between items-center mb-4'>
-                    <h5 className='custom-font-medium text-lg'>Filters</h5>
+                {/* Sticky Header */}
+                <div className="sticky top-0 z-10 bg-black text-white flex justify-between items-center p-4">
+                    <h5 className="custom-font-medium text-lg">Filters</h5>
                     <button onClick={onClose}>
-                        <FaTimes className="text-gray-600 text-xl" />
+                        <FaTimes className="text-white text-xl" />
                     </button>
                 </div>
 
-                {/* Shared Content */}
-                <RenderSidebarContent sidebarContent={sidebarContent} />
+                {/* Scrollable Content */}
+                <div className="overflow-y-auto flex-grow p-4">
+                    <RenderSidebarContent sidebarContent={sidebarContent} />
+                </div>
             </div>
 
-            <div className="hidden lg:flex lg:col-span-3 flex-col gap-4 p-6">
+
+            {/* Desktop Sidebar */}
+            <div className=" hidden lg:flex lg:col-span-3 flex-col gap-4 p-6 ">
                 <RenderSidebarContent sidebarContent={sidebarContent} />
             </div>
         </>
