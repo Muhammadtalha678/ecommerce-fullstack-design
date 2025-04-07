@@ -19,7 +19,7 @@ const ProductPage = () => {
         <div className="min-h-screen bg-[#F5F7FA]">
 
             {/* Breadcrumbs */}
-            <div className="mb-4">
+            <div className="">
                 <Breadcrumbs paths={breadcrumbs} />
             </div>
             {/* Main Content */}
