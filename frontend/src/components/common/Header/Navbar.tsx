@@ -20,7 +20,7 @@ const TopNav = () => {
                 <div className="flex items-center gap-4">
                     {/* Mobile Menu Button */}
                     <button
-                        className="md:hidden text-gray-700 text-xl"
+                        className="lg:hidden text-gray-700 text-xl"
                         onClick={toggleMenu}
                         aria-label="Toggle menu"
                     >
@@ -28,7 +28,7 @@ const TopNav = () => {
                     </button>
 
                     {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-6 text-gray-700 text-sm">
+                    <div className="hidden lg:flex items-center gap-6 text-gray-700 text-sm">
                         <button className="flex items-center hover:text-blue-500 custom-font-medium text-[16px]">
                             <FaBars className="mr-2" /> All category
                         </button>
@@ -49,7 +49,7 @@ const TopNav = () => {
                 </div>
 
                 {/* Right Section - Language & Shipping */}
-                <div className="hidden md:flex items-center gap-4 text-gray-700 text-sm">
+                <div className="hidden lg:flex items-center gap-4 text-gray-700 text-sm">
                     <select className="bg-transparent focus:outline-none cursor-pointer custom-font-medium text-[16px] leading-[22px]">
                         <option>English, USD</option>
                         <option>Spanish, EUR</option>
@@ -76,53 +76,55 @@ const TopNav = () => {
             </div>
 
             {/* Mobile Dropdown Menu */}
-            {isMenuOpen && (
-                <div className="md:hidden mt-3 flex flex-col bg-white shadow-md p-4 space-y-2 text-gray-700">
-                    <button className="flex items-center">
-                        <FaBars className="mr-2" /> All category
-                    </button>
-                    <a href="#" className="hover:text-blue-500">
-                        Hot offers
-                    </a>
-                    <a href="#" className="hover:text-blue-500">
-                        Gift boxes
-                    </a>
-                    <a href="#" className="hover:text-blue-500">
-                        Projects
-                    </a>
-                    <a href="#" className="hover:text-blue-500">
-                        Menu item
-                    </a>
-                    <select className="bg-transparent focus:outline-none">
-                        <option>Help</option>
-                        <option>FAQ</option>
-                        <option>Contact Us</option>
-                    </select>
-                    <select className="bg-transparent focus:outline-none mt-2">
-                        <option>English, USD</option>
-                        <option>Spanish, EUR</option>
-                        <option>French, EUR</option>
-                    </select>
-                    <div className="flex items-center mt-2">
-                        <span>Ship to</span>
-                        <ReactCountryFlag
-                            countryCode={countryFlag}
-                            svg
-                            style={{ width: '20px', height: '15px' }}
-                            title={countryFlag}
-                        />
-
-                        <select className="bg-transparent focus:outline-none"
-                            value={countryFlag}
-                            onChange={(e) => setCountryFlag(e.target.value)}>
-                            <option value="DE">Germany</option>
-                            <option value="US">USA</option>
-                            <option value="FR">France</option>
+            {
+                isMenuOpen && (
+                    <div className="md:hidden mt-3 flex flex-col bg-white shadow-md p-4 space-y-2 text-gray-700">
+                        <button className="flex items-center">
+                            <FaBars className="mr-2" /> All category
+                        </button>
+                        <a href="#" className="hover:text-blue-500">
+                            Hot offers
+                        </a>
+                        <a href="#" className="hover:text-blue-500">
+                            Gift boxes
+                        </a>
+                        <a href="#" className="hover:text-blue-500">
+                            Projects
+                        </a>
+                        <a href="#" className="hover:text-blue-500">
+                            Menu item
+                        </a>
+                        <select className="bg-transparent focus:outline-none">
+                            <option>Help</option>
+                            <option>FAQ</option>
+                            <option>Contact Us</option>
                         </select>
+                        <select className="bg-transparent focus:outline-none mt-2">
+                            <option>English, USD</option>
+                            <option>Spanish, EUR</option>
+                            <option>French, EUR</option>
+                        </select>
+                        <div className="flex items-center mt-2">
+                            <span>Ship to</span>
+                            <ReactCountryFlag
+                                countryCode={countryFlag}
+                                svg
+                                style={{ width: '20px', height: '15px' }}
+                                title={countryFlag}
+                            />
+
+                            <select className="bg-transparent focus:outline-none"
+                                value={countryFlag}
+                                onChange={(e) => setCountryFlag(e.target.value)}>
+                                <option value="DE">Germany</option>
+                                <option value="US">USA</option>
+                                <option value="FR">France</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-            )}
-        </nav>
+                )
+            }
+        </nav >
     );
 };
 
