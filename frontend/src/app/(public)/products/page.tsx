@@ -1,10 +1,4 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaBars, FaHeart, FaShoppingBag, FaCaretDown, FaTimes } from 'react-icons/fa';
 import Breadcrumbs from '@/components/product/Breadcrumb';
-import ProductListing from '@/components/product/ProductListing';
-import ProductCard from '@/components/product/ProductCard';
-import Sidebar from '@/components/product/Sidebar';
 import MainContent from './main-content';
 
 // Define the type for breadcrumb items
