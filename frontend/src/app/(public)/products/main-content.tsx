@@ -1,8 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import FiltersViewToggle from '@/components/product/FiltersViewToggle';
 import Sidebar from '@/components/product/Sidebar';
-import ProductCard from '@/components/product/ProductCard';
 import ProductListing from '@/components/product/ProductListing';
 import { Product } from '@/interfaces/Product';
 
