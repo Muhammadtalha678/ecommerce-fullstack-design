@@ -3,7 +3,7 @@ import { env } from './lib/configs/env.config.js'
 import { connectDb } from './lib/db/connectDb.js'
 import AuthRouter from './routers/auth.router.js'
 const app = express()
-
+app.use(express.json())
 app.get('/', (req, res) => {
     return res.send('Hello World')    
 })
