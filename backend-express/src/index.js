@@ -9,7 +9,7 @@ app.use(cors({
     origin: ["http://localhost:3000"],
     methods: ['GET', 'POST', 'PUT', 'DELETE'], //allow all methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-    credentials: true, // Allow cookies if needed
+    credentials: true, //Allow cookies if needed
 }))
 
 app.use(express.json())
