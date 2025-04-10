@@ -5,7 +5,7 @@ import { ApiRoutes } from "@/constants/constant";
 interface ApiResponse {
     error: boolean, message: string, data: any
 }
-export const register = async (state: any, formData: FormData): Promise<ApiResponse> => {
+export const register = async (state: ApiResponse | undefined, formData: FormData): Promise<ApiResponse> => {
     const registerData = {
         fullname: formData.get('name'),
         email: formData.get('email'),
