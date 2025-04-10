@@ -1,10 +1,9 @@
 'use server'
 
 import { ApiRoutes } from "@/constants/constant";
+import { ApiResponse } from "@/interfaces/Auth";
 
-interface ApiResponse {
-    error: boolean, message: string, data: null | undefined
-}
+
 export const register = async (state: ApiResponse | undefined, formData: FormData): Promise<ApiResponse> => {
     const registerData = {
         fullname: formData.get('name'),
@@ -23,30 +22,28 @@ export const register = async (state: ApiResponse | undefined, formData: FormDat
             body: JSON.stringify(registerData)
         })
         clearTimeout(timeoutId)
-        if (!response.ok) {
-            const error = await response.json()
-            console.log("error", error);
-
-            throw new Error(error.message || "Registration Failed");
-
-        }
         const data = await response.json()
+        if (!response.ok) {
+            return {
+                error: true,
+                errors: data.errors || {},
+                data: null,
+            };
+        }
         // console.log(data);
 
         return {
-            error: false, message: data.message, data: data.data
+            error: false, errors: {}, data: data.data
         }
     } catch (error) {
         const err = error as Error
-        let message = err.message;
-
-        if (err.name === 'AbortError') {
-            message = 'Request timed out';
-        }
+        const timeout = err.name === "AbortError";
 
         return {
             error: true,
-            message,
+            errors: {
+                general: timeout ? "Request timed out" : err.message || "An error occurred",
+            },
             data: null,
         };
     }
