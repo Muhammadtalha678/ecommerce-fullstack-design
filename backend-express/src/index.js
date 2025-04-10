@@ -6,7 +6,7 @@ import cors from 'cors'
 const app = express()
 
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000","https://ecommerce-fullstack-design-frontend.vercel.app"],
     methods: ['GET', 'POST', 'PUT', 'DELETE'], //allow all methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true, //Allow cookies if needed
