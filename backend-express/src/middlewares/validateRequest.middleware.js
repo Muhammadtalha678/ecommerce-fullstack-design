@@ -11,6 +11,7 @@ export const validateRequest = (validationSchema) => (req, res, next) => {
                 fieldErrors[field] = detail.message
             }
         });
+        return sendResponse(res,400,true,fieldErrors,null)
     }
     next()
 }
