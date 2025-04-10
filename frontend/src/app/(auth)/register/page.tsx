@@ -1,11 +1,8 @@
-// 'use client'
-import { handleRegister } from '@/actions/actions'
-import AuthForm from '@/components/Auth/AuthForm'
-import React from 'react'
+import RegisterForm from "./RegisterForm"
 
 const Register = () => {
     return (
-        <AuthForm isRegister={true} action={handleRegister} />
+        <RegisterForm />
     )
 }
 
