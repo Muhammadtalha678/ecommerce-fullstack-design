@@ -19,11 +19,12 @@ const registerValidation = joi.object({
             'string.min': 'Password must be at least 8 characters',
             'any.required': 'Password is required',
         }),
-    confirmPassword: joi.string()
-    .valid(joi.ref('password'))
-    .required()
-    .messages({
-      'any.only': 'Passwords do not match',
+        confirmPassword: joi.string().min(8)
+        .valid(joi.ref('password'))
+        .required()
+        .messages({
+            'any.only': 'Passwords do not match',
+            'string.min': 'Password must be at least 8 characters',
       'string.empty': 'Confirm Password is required',
       'any.required': 'Confirm Password is required',
     }),
