@@ -30,7 +30,6 @@ export const register = async (state: ApiResponse | undefined, formData: FormDat
                 data: null,
             };
         }
-        // console.log(data);
 
         return {
             error: false, errors: {}, data: data.data
