@@ -6,5 +6,5 @@ export interface ApiResponse {
         confirmPassword?: string,
         [key: string]: string | undefined; // for any extra fields
     },
-    data: any | null
+    data: object | null
 } 
