@@ -1,6 +1,29 @@
 'use client'
+import { ApiResponse } from '@/interfaces/Auth'
 import Link from 'next/link'
-const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action: (formData: FormData) => void }) => {
+import { ChangeEvent } from 'react'
+interface FormValues {
+    name: string
+    email: string
+    password: string
+    confirmPassword?: string
+}
+const AuthForm = (
+    {
+        isRegister = false,
+        action,
+        state,
+        pending,
+        FormValues,
+        onChange
+    }: {
+        isRegister: boolean,
+        action: (formData: FormData) => void,
+        state?: ApiResponse;
+        pending?: boolean | undefined;
+        FormValues?: FormValues,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => void
+    }) => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -28,8 +51,16 @@ const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action:
                                 type="text"
                                 placeholder="Full name"
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
+                                name='name'
+                                value={FormValues?.name}
+                                onChange={onChange}
+
                             />
+                            <p className=" text-red-500 text-sm mt-6">
+                                {
+                                    state?.error && state.errors.fullname && state.errors.fullname
+                                }
+                            </p>
                         </div>
                     )}
                     <div>
@@ -37,8 +68,15 @@ const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action:
                             type="email"
                             placeholder="Email address"
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
+                            name='email'
+                            value={FormValues?.email}
+                            onChange={onChange}
                         />
+                        <p className=" text-red-500 text-sm mt-6">
+                            {
+                                state?.error && state.errors.email && state.errors.email
+                            }
+                        </p>
                     </div>
 
                     <div>
@@ -46,8 +84,16 @@ const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action:
                             type="password"
                             placeholder="Password"
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
+                            name='password'
+                            value={FormValues?.password}
+                            onChange={onChange}
+
                         />
+                        <p className=" text-red-500 text-sm mt-6">
+                            {
+                                state?.error && state.errors.password && state.errors.password
+                            }
+                        </p>
                     </div>
 
                     {isRegister && (
@@ -56,8 +102,16 @@ const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action:
                                 type="password"
                                 placeholder="Re-enter Password"
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
+                                name='confirmPassword'
+                                value={FormValues?.confirmPassword}
+                                onChange={onChange}
+
                             />
+                            <p className=" text-red-500 text-sm mt-6">
+                                {
+                                    state?.error && state.errors.confirmPassword && state.errors.confirmPassword
+                                }
+                            </p>
                         </div>
                     )}
 
@@ -75,8 +129,9 @@ const AuthForm = ({ isRegister = false, action }: { isRegister: boolean, action:
                     <button
                         type="submit"
                         className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-800 transition-colors"
+                    // disabled={pending}
                     >
-                        {isRegister ? 'SIGN UP' : 'LOGIN'}
+                        {isRegister ? pending ? "...." : 'SIGN UP' : 'LOGIN'}
                     </button>
                 </form>
 
