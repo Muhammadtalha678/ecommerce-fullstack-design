@@ -1,4 +1,3 @@
-import VerifyEmail from '@/components/Auth/VerifyEmail'
 import React from 'react'
 import VerfiyEmailForm from './VerfiyEmailForm'
 
