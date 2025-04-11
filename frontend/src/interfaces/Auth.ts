@@ -1,10 +1,11 @@
 export interface ApiResponse {
-    error: boolean, errors: {
+    error: boolean,
+    errors: {
         fullname?: string,
         email?: string,
         password?: string,
         confirmPassword?: string,
         [key: string]: string | undefined; // for any extra fields
     },
-    data: object | null
+    data: { message?: string, key?: string } | null
 } 
