@@ -27,7 +27,7 @@ const registerController = async (req, res) => {
             return sendResponse(res, 500, true, { general: "Failed to send verification email. Please try again." }, null);
         }
         await newUSer.save()
-        return sendResponse(res,200,false,{},{message:"User Registered Succesfully, OTP sent to email."})
+        return sendResponse(res,200,false,{},{email:newUSer.email,fullname:newUSer.fullname,message:"User Registered Succesfully, OTP sent to email."})
         
     } catch (error) {
         
