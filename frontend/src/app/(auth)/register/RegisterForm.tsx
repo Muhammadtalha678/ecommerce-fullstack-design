@@ -1,7 +1,7 @@
 'use client'
 import { register } from '@/actions/actions'
 import AuthForm from '@/components/Auth/AuthForm'
-import React, { ChangeEvent, useActionState, useState } from 'react'
+import React, { ChangeEvent, useActionState, useEffect, useState } from 'react'
 
 const RegisterForm = () => {
     const [state, registerAction, pending] = useActionState(register, undefined)
@@ -12,6 +12,15 @@ const RegisterForm = () => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value })
     }
+    useEffect(() => {
+        if (state && !state.error) {
+            setFormValues(
+                {
+                    name: "", email: "", password: "", confirmPassword: "",
+                }
+            )
+        }
+    }, [state])
     return (
         <AuthForm action={registerAction} isRegister={true} pending={pending} state={state} onChange={onChange} FormValues={formValues} />
     )
