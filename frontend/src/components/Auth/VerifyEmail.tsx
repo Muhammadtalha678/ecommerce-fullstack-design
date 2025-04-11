@@ -15,9 +15,7 @@ const VerifyEmail = ({ action, state, pending }: {
 
     const email = searchParams.get('email') || ""
 
-    const [formValues, setFormValues] = useState({
-        email: email, otp: ''
-    })
+    const [otp, setOtp] = useState<string>('')
     useEffect(() => {
         if (!email) {
             router.back();
@@ -40,17 +38,13 @@ const VerifyEmail = ({ action, state, pending }: {
 
                 {/* Form */}
                 <form action={action} className="space-y-4">
-
+                    <input type="hidden" name="email" value={email} />
                     <div>
-                        <input
-                            type="email"
-                            placeholder="Email address"
+                        <p
+
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={formValues.email}
-                            onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
-                            name='email'
-                            required
-                        />
+
+                        >{email}</p>
                         <p className=" text-red-500 text-sm mt-6">
                             {
                                 state?.error && state.errors.email && state.errors.email
@@ -64,9 +58,14 @@ const VerifyEmail = ({ action, state, pending }: {
                             placeholder="Enter 6-digit OTP"
                             maxLength={6}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center tracking-widest font-mono"
-                            value={formValues.otp}
+                            value={otp}
                             name='otp'
-                            onChange={(e) => setFormValues({ ...formValues, otp: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value
+                                if (/^[0-9]{0,6}$/.test(value)) {
+                                    setOtp(value)
+                                }
+                            }}
                             required
                         />
                         <p className=" text-red-500 text-sm mt-6">
