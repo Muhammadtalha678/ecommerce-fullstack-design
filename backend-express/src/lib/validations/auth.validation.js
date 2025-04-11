@@ -7,7 +7,7 @@ const registerValidation = joi.object({
             'string.min': 'Full name must be at least 3 characters',
             'any.required': 'Full name is required',
         }),
-    email: joi.string().email({ minDomainSegments: 2, tlds: ['com', 'net'] }).required()
+    email: joi.string().email({ minDomainSegments: 2, tlds: {allow:['com', 'net']} }).required()
     .messages({
             'string.empty': 'Email is required',
             'string.email': 'Please provide a valid email address',
