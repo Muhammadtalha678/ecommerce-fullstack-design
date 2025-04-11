@@ -15,6 +15,7 @@ export const register = async (state: ApiResponse | undefined, formData: FormDat
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 10000);
         const response = await fetch(ApiRoutes.register, {
+            signal: controller.signal, // ✅ Needed for timeout to work
             headers: {
                 'Content-Type': 'application/json',
             },
