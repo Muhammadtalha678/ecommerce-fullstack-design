@@ -17,16 +17,16 @@ const registerController = async (req, res) => {
 
         const hashPassword = await bcrypt.hash(password, 10)
         password = hashPassword
-        let newUSer = new UserModal({ fullname, email, password,verificationToken })
-        newUSer.save()
+        const newUSer = new UserModal({ fullname, email, password,verificationToken })
         try {
             await sendVerificationEmail(email,verificationToken)
             
         } catch (emailError) {
             // Rollback user creation if email sending fails
-            await UserModal.findByIdAndDelete(newUSer._id)
-             return sendResponse(res, 500, true, { general: "Failed to send verification email. Please try again." }, null);
+            // await UserModal.findByIdAndDelete(newUSer._id)
+            return sendResponse(res, 500, true, { general: "Failed to send verification email. Please try again." }, null);
         }
+        await newUSer.save()
         return sendResponse(res,200,false,{},{message:"User Registered Succesfully, OTP sent to email."})
         
     } catch (error) {
