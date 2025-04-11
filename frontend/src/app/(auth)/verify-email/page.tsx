@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import VerfiyEmailForm from './VerfiyEmailForm'
 
 
@@ -6,7 +6,10 @@ const OtpPage = async () => {
 
 
     return (
-        <VerfiyEmailForm />
+        <Suspense fallback={<div>Loading...</div>}>
+            <VerfiyEmailForm />
+
+        </Suspense>
     )
 }
 
