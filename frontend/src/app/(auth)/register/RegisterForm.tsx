@@ -2,8 +2,10 @@
 import { register } from '@/actions/actions'
 import AuthForm from '@/components/Auth/AuthForm'
 import React, { ChangeEvent, useActionState, useEffect, useState } from 'react'
-
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 const RegisterForm = () => {
+    const router = useRouter()
     const [state, registerAction, pending] = useActionState(register, undefined)
     const [formValues, setFormValues] = useState({
         name: '', email: '', password: "", confirmPassword: ''
@@ -13,14 +15,24 @@ const RegisterForm = () => {
         setFormValues({ ...formValues, [name]: value })
     }
     useEffect(() => {
-        if (state && !state.error) {
-            setFormValues(
-                {
-                    name: "", email: "", password: "", confirmPassword: "",
+        if (state) {
+            if (state.error && state.errors?.general) {
+                toast.error(state.errors?.general || "Something went wrong")
+            } else {
+                if (!state.error) {
+                    toast.success(state.data?.message || "Registration Successfull!")
+                    const email = state.data?.email;
+                    if (email) {
+                        setTimeout(() => {
+                            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+                        }, 2000);
+                    }
+
                 }
-            )
+            }
+
         }
-    }, [state])
+    }, [state, router])
     return (
         <AuthForm action={registerAction} isRegister={true} pending={pending} state={state} onChange={onChange} FormValues={formValues} />
     )
