@@ -17,7 +17,7 @@ const registerController = async (req, res) => {
 
         const hashPassword = await bcrypt.hash(password, 10)
         password = hashPassword
-        let newUSer = new UserModal({ fullname, email, password })
+        let newUSer = new UserModal({ fullname, email, password,verificationToken })
         newUSer.save()
         try {
             await sendVerificationEmail(email,verificationToken)
