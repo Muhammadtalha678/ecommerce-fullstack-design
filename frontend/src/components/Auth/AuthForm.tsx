@@ -44,7 +44,7 @@ const AuthForm = (
 
                 {/* Form */}
                 <form action={action} className="space-y-4">
-                    {
+                    {/* {
                         <p className='text-red-500 text-sm mt-6 text-center'>
                             {state?.error && state.errors.general && state.errors.general}
                         </p>
@@ -53,7 +53,7 @@ const AuthForm = (
                         <p className='text-green-500 text-sm mt-6 text-center'>
                             {!state?.error && state?.data && state.data.message}
                         </p>
-                    }
+                    } */}
                     {isRegister && (
                         <div>
                             <input
