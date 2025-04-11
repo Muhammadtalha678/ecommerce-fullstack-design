@@ -1,8 +1,8 @@
 import * as nodemailer from 'nodemailer'
-import { envConfig } from 'e:/SAYLANI HACKATHON/Backend Express/src/lib/configs/env.config'
+import { env } from '../lib/configs/env.config.js'
 const sendVerificationEmail = async (email, token) => {
     const mailOptions = {
-        from: `DevHubInternship program "${envConfig.EMAIL_USER}"`, // Sender address
+        from: `DevHubInternship program "${env.EMAIL_USER}"`, // Sender address
             to: email, // Recipient address
             subject: 'Verify Your Email', // Subject line
             html: `
@@ -21,8 +21,8 @@ const sendVerificationEmail = async (email, token) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: envConfig.EMAIL_USER,
-            pass:envConfig.EMAIL_PASS
+            user: env.EMAIL_USER,
+            pass:env.EMAIL_PASS
         }
     })
     await transporter.sendMail(mailOptions)
