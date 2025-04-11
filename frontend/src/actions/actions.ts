@@ -53,9 +53,19 @@ export const register = async (state: ApiResponse | undefined, formData: FormDat
 
 
 export const verifyEmailAction = async (state: ApiResponse | undefined, formData: FormData): Promise<ApiResponse> => {
+
     const verifyEmailData = {
         otp: formData.get('otp'),
         email: formData.get('email')
+    }
+    const otp = verifyEmailData.otp?.toString() ?? "";
+
+    if (otp.length !== 6) {
+        return {
+            error: true,
+            errors: { otp: "Please enter a valid 6-digit OTP." },
+            data: null,
+        };
     }
     try {
         const controller = new AbortController()
