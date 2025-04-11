@@ -34,7 +34,6 @@ const AuthForm = (
                             <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
                             <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-800">Logipsum</h1>
                     </div>
                 </div>
 
@@ -45,6 +44,16 @@ const AuthForm = (
 
                 {/* Form */}
                 <form action={action} className="space-y-4">
+                    {
+                        <p className='text-red-500 text-sm mt-6 text-center'>
+                            {state?.error && state.errors.general && state.errors.general}
+                        </p>
+                    }
+                    {
+                        <p className='text-green-500 text-sm mt-6 text-center'>
+                            {!state?.error && state?.data && state.data.message}
+                        </p>
+                    }
                     {isRegister && (
                         <div>
                             <input
@@ -128,10 +137,10 @@ const AuthForm = (
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-800 transition-colors"
-                    // disabled={pending}
+                        className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-500 transition-colors cursor-pointer"
+                        disabled={pending}
                     >
-                        {isRegister ? pending ? "...." : 'SIGN UP' : 'LOGIN'}
+                        {isRegister ? pending ? "Processing" : 'SIGN UP' : 'LOGIN'}
                     </button>
                 </form>
 
