@@ -25,6 +25,11 @@ const sendVerificationEmail = async (email, token) => {
             pass:env.EMAIL_PASS
         }
     })
-    await transporter.sendMail(mailOptions)
+    
+  const info = await transporter.sendMail(mailOptions)
+  if (info.rejected.length > 0) {
+  console.error("Email rejected:", info.rejected);
+  throw new Error("Email sending was rejected");
+}
 }
 export {sendVerificationEmail}
