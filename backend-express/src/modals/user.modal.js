@@ -6,7 +6,8 @@ const UserSchema = new Schema(
         email: { type: String, unique: true, required: true },
         password: { type: String, required: true },
         verificationToken: { type: String },
-        isVerified:{type:Boolean,default:false},
+        isVerified: { type: Boolean, default: false },
+        otpExpiresAt: { type: Date, required: true },
         role: { type: String, enum: ['admin','user'],default:'user'}
     },
     {
