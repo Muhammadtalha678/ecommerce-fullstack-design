@@ -90,7 +90,7 @@ const VerifyEmail = ({ action, state, pending }: {
                 </form>
 
                 <p className="text-center text-gray-500 text-sm mt-6">
-                    Didn't receive code? <span className="text-blue-500 cursor-pointer hover:underline">Resend</span>
+                    Didn&rsquo;t receive code? <span className="text-blue-500 cursor-pointer hover:underline">Resend</span>
                 </p>
 
 
