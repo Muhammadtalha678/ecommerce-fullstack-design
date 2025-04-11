@@ -17,7 +17,8 @@ const registerController = async (req, res) => {
 
         const hashPassword = await bcrypt.hash(password, 10)
         password = hashPassword
-        const newUSer = new UserModal({ fullname, email, password,verificationToken })
+        const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
+        const newUSer = new UserModal({ fullname, email, password,verificationToken,otpExpiresAt })
         try {
             await sendVerificationEmail(email,verificationToken)
             
@@ -47,10 +48,14 @@ const verifyEmailController = async (req, res) => {
 
         // Check if OTP matches and is not expired
                 if (findUser.verificationToken !== otp)  return sendResponse(res, 400, true, {otp:"Invalid OTP"}, null); 
+        // check token expire time
+                 if (findUser.otpExpiresAt < Date.now()) 
+                    return sendResponse(res, 400, true, {general:"OTP has expired"}, null);        
+        
                 findUser.verificationToken = undefined;
                 findUser.isVerified = true;
                 await findUser.save();
-                        return sendRepsonse(res, 200, false, {message:"OTP verified successfully"}, null);
+                        return sendResponse(res, 200, false, {message:"OTP verified successfully"}, null);
         
     } catch (error) {
         
