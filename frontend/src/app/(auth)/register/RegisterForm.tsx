@@ -16,19 +16,17 @@ const RegisterForm = () => {
     }
     useEffect(() => {
         if (state) {
-            if (state.error && state.errors?.general) {
-                toast.error(state.errors?.general || "Something went wrong")
+            if (state.errors?.general) {
+                toast.error(state.errors.general)
             } else {
-                if (!state.error) {
-                    toast.success(state.data?.message || "Registration Successfull!")
-                    const email = state.data?.email;
-                    if (email) {
-                        setTimeout(() => {
-                            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-                        }, 2000);
-                    }
-
+                toast.success(state.data?.message || "Registration Successfull!")
+                const email = state.data?.email;
+                if (email) {
+                    setTimeout(() => {
+                        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+                    }, 2000);
                 }
+
             }
 
         }
