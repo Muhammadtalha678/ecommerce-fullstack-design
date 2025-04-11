@@ -37,6 +37,7 @@ const registerController = async (req, res) => {
 const verifyEmailController = async (req, res) => {
     try {
         let { email, otp } = req.body
+
         
         // find user
         const findUser = await UserModal.findOne({email})
@@ -45,8 +46,9 @@ const verifyEmailController = async (req, res) => {
         }
 
         // Check if OTP matches and is not expired
-                if (findUser.verificationToken !== otp)  return sendRepsonse(res, 400, true, {otp:"Invalid OTP"}, null); 
+                if (findUser.verificationToken !== otp)  return sendResponse(res, 400, true, {otp:"Invalid OTP"}, null); 
                 findUser.verificationToken = undefined;
+                findUser.isVerified = true;
                 await findUser.save();
                         return sendRepsonse(res, 200, false, {message:"OTP verified successfully"}, null);
         

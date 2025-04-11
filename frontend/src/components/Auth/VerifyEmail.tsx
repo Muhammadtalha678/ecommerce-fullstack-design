@@ -1,8 +1,28 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { ApiResponse } from '@/interfaces/Auth'
+const VerifyEmail = ({ action, state, pending }: {
 
-const VerifyEmail = () => {
+    action: (formData: FormData) => void,
+    state?: ApiResponse,
+    pending?: boolean
+}) => {
+    console.log("pending", pending);
+    const searchParams = useSearchParams()
+    const router = useRouter()
+
+    const email = searchParams.get('email') || ""
+
+    const [formValues, setFormValues] = useState({
+        email: email, otp: ''
+    })
+    useEffect(() => {
+        if (!email) {
+            router.back();
+        }
+    }, [email, router]);
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -19,23 +39,23 @@ const VerifyEmail = () => {
                 </h2>
 
                 {/* Form */}
-                <form className="space-y-4">
-                    <p className='text-red-500 text-sm text-center'>
-                        {/* {error} */}
-                    </p>
-                    <p className='text-green-500 text-sm text-center'>
-                        {/* {success} */}
-                    </p>
+                <form action={action} className="space-y-4">
 
                     <div>
                         <input
                             type="email"
                             placeholder="Email address"
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            //   value={email}
-                            //   onChange={(e) => setEmail(e.target.value)}
+                            value={formValues.email}
+                            onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
+                            name='email'
                             required
                         />
+                        <p className=" text-red-500 text-sm mt-6">
+                            {
+                                state?.error && state.errors.email && state.errors.email
+                            }
+                        </p>
                     </div>
 
                     <div>
@@ -44,18 +64,28 @@ const VerifyEmail = () => {
                             placeholder="Enter 6-digit OTP"
                             maxLength={6}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center tracking-widest font-mono"
-                            //   value={otp}
-                            //   onChange={(e) => setOtp(e.target.value)}
+                            value={formValues.otp}
+                            name='otp'
+                            onChange={(e) => setFormValues({ ...formValues, otp: e.target.value })}
                             required
                         />
+                        <p className=" text-red-500 text-sm mt-6">
+                            {
+                                state?.error && state.errors.otp && state.errors.otp
+                            }
+                        </p>
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-500 transition-colors"
-                    //   disabled={pending}
+                        className={`w-full text-white p-3 rounded-lg transition-colors 
+        ${pending
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-black hover:bg-gray-700 cursor-pointer"
+                            }`}
+                        disabled={pending}
                     >
-                        Verify
+                        {pending ? "Processing..." : "Verify"}
                     </button>
                 </form>
 
