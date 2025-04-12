@@ -50,7 +50,8 @@ const VerifyEmail = ({ action, state, pending, isRedirecting }: {
                 toast.error(data.errors?.general || "Failed to resend OTP.")
             }
         } catch (error) {
-            toast.error("Something went wrong.")
+            const err = error as Error
+            toast.error(err.message || "Something went wrong.")
         }
     }
 
