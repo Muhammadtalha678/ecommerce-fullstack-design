@@ -18,13 +18,13 @@ const AuthForm = (
         isRedirecting,
         onChange
     }: {
-        isRegister: boolean,
-        action: (formData: FormData) => void,
+        isRegister?: boolean,
+        action?: (formData: FormData) => void,
         state?: ApiResponse;
         pending?: boolean | undefined;
         FormValues?: FormValues,
-        isRedirecting: boolean
-        onChange: (e: ChangeEvent<HTMLInputElement>) => void
+        isRedirecting?: boolean
+        onChange?: (e: ChangeEvent<HTMLInputElement>) => void
     }) => {
     return (
         isRedirecting ? (
