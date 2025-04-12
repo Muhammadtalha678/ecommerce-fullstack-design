@@ -14,6 +14,7 @@ const RegisterForm = () => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value })
     }
+    const [isRedirecting, setIsRedirecting] = useState(false)
     useEffect(() => {
         if (state) {
             if (state.errors?.general) {
@@ -23,6 +24,7 @@ const RegisterForm = () => {
                     toast.success(state.data?.message || "Registration Successfull!")
                     const email = state.data?.email;
                     if (email) {
+                        setIsRedirecting(true)
                         setTimeout(() => {
                             router.push(`/verify-email?email=${encodeURIComponent(email)}`);
                         }, 2000);
@@ -35,7 +37,7 @@ const RegisterForm = () => {
         }
     }, [state, router])
     return (
-        <AuthForm action={registerAction} isRegister={true} pending={pending} state={state} onChange={onChange} FormValues={formValues} />
+        <AuthForm action={registerAction} isRegister={true} pending={pending || isRedirecting} state={state} onChange={onChange} FormValues={formValues} isRedirecting={isRedirecting} />
     )
 }
 
