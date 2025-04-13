@@ -1,9 +1,10 @@
-import AuthForm from '@/components/Auth/AuthForm'
+
 import React from 'react'
+import LoginForm from './LoginForm'
 
 const Login = () => {
     return (
-        <AuthForm />
+        <LoginForm />
     )
 }
 
