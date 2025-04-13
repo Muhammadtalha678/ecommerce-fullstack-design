@@ -2,6 +2,8 @@ import UserModal from '../modals/user.modal.js'
 import { sendResponse } from '../helpers/sendResponse.js'
 import bcrypt from 'bcrypt'
 import { sendVerificationEmail } from '../helpers/mailerService.js'
+import jwt from 'jsonwebtoken'
+import { env } from '../lib/configs/env.config.js'
 const registerController = async (req, res) => {
     try {
         let { fullname, email, password } = req.body
@@ -95,4 +97,26 @@ const resendEmailController = async (req, res) => {
     }
 }
 
-export {registerController,verifyEmailController,resendEmailController}
+const loginController = async (req, res) => {
+     try {
+        let {email, password } = req.body
+        
+        // find user
+        const user = await UserModal.findOne({email}).lean()
+        if (!user) {
+            return sendResponse(res,409,true,{email:"User is not registered"},null)
+        }
+
+        const isPasswordValid = await bcrypt.compare(password,user.password)
+         if (!isPasswordValid) return sendResponse(res, 401, true, { email: "Invalid email or password" }, null);
+         delete user.password
+         const token = jwt.sign({...user},env.AUTH_SECRET)
+       return sendResponse(res,200,false,{},{user,token,message:"User Login Successfully"})
+        
+    } catch (error) {
+        
+        return sendResponse(res,500,true,{ general: error.message },null)
+    }
+} 
+
+export {registerController,verifyEmailController,resendEmailController,loginController}
