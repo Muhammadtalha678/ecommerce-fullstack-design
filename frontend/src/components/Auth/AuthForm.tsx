@@ -3,9 +3,9 @@ import { ApiResponse } from '@/interfaces/Auth'
 import Link from 'next/link'
 import { ChangeEvent } from 'react'
 interface FormValues {
-    name: string
-    email: string
-    password: string
+    name?: string
+    email?: string
+    password?: string
     confirmPassword?: string
 }
 const AuthForm = (
@@ -46,7 +46,9 @@ const AuthForm = (
                             d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
                         />
                     </svg>
-                    <p className="text-black font-semibold">Redirecting to Verify Email...</p>
+                    <p className="text-black font-semibold">{
+                        isRegister ? "Redirecting to Verify Email..." : "Redirecting to Homepage..."
+                    }</p>
                 </div>
             </div>
         ) :
@@ -165,7 +167,7 @@ const AuthForm = (
                             className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-500 transition-colors cursor-pointer"
                             disabled={pending}
                         >
-                            {isRegister ? pending ? "Processing" : 'SIGN UP' : 'LOGIN'}
+                            {isRegister ? pending ? "Processing" : 'SIGN UP' : pending ? "Processing" : 'LOGIN'}
                         </button>
                     </form>
 
