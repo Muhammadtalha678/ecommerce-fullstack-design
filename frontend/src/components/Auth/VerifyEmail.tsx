@@ -18,6 +18,7 @@ const VerifyEmail = ({
     pending?: boolean,
     isRedirecting: boolean
 }) => {
+    const resendEmailRoute = ApiRoutes.resendEmail
     const router = useRouter()
 
     const [email, setEmail] = useState<string>('')
@@ -57,14 +58,14 @@ const VerifyEmail = ({
     const handleResend = async () => {
         setResendPending(true);
         try {
-            if (!ApiRoutes.resendEmail || ApiRoutes.resendEmail.includes('undefined')) {
-                console.error('Invalid resendEmail URL:', ApiRoutes.resendEmail);
+            if (!resendEmailRoute || resendEmailRoute.includes('undefined')) {
+                console.error('Invalid resendEmail URL:', resendEmailRoute);
                 toast.error('Configuration error: Invalid API URL');
                 return;
             }
 
-            console.log('Fetching resendEmail:', ApiRoutes.resendEmail);
-            const res = await fetch(ApiRoutes.resendEmail, {
+            console.log('Fetching resendEmail:', resendEmailRoute);
+            const res = await fetch(resendEmailRoute, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
