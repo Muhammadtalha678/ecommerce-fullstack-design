@@ -132,7 +132,6 @@ export const login = async (state: ApiResponse | undefined, formData: FormData):
                 data: null,
             };
         }
-        console.log(data);
 
         return {
             error: false, errors: {}, data: data.data

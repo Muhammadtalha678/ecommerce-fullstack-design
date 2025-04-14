@@ -47,7 +47,7 @@ const AuthForm = (
                         />
                     </svg>
                     <p className="text-black font-semibold">{
-                        isRegister ? "Redirecting to Verify Email..." : "Redirecting to Homepage..."
+                        isRegister ? "Redirecting to Verify Email..." : !state?.errors?.isVerified ? "Redirecting to Verify Email..." : "Redirecting to Homepage..."
                     }</p>
                 </div>
             </div>

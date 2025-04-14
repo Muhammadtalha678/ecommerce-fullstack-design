@@ -17,12 +17,28 @@ const LoginForm = () => {
     const [isRedirecting, setIsRedirecting] = useState(false)
     useEffect(() => {
         if (state) {
-            if (state.errors?.general) {
-                toast.error(state.errors.general)
-            } else {
+            if (state.error) {
+                if (!state.errors?.isVerified && !state.errors?.email && state.errors?.otpExpiresAt) {
+                    const expiryTime = state.errors?.otpExpiresAt
+                    if (expiryTime) {
+                        localStorage.setItem("verifyEmail", JSON.stringify({
+                            email: formValues.email,
+                            expiry: new Date(expiryTime).getTime()
+                        }));
+                        setIsRedirecting(true);
+                        setTimeout(() => {
+                            router.push(`/verify-email`);
+                        }, 2000);
+                    }
+                }
+                if (state.errors?.general) {
+                    toast.error(state.errors.general)
+                }
+            }
+            else {
                 if (!state.error) {
                     toast.success(state.data?.message || "Login Successfull!")
-                    const token = state.data?.token;
+                    const token = state.data?.accessToken;
                     if (token) {
                         setIsRedirecting(true)
                         setTimeout(() => {
