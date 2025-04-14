@@ -60,7 +60,8 @@ const VerifyEmail = ({
             const res = await fetch(ApiRoutes.resendEmail, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email }),
+                credentials: 'include'
             })
 
             const data = await res.json()
