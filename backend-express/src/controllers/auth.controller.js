@@ -3,6 +3,8 @@ import { sendResponse } from '../helpers/sendResponse.js'
 import bcrypt from 'bcrypt'
 import { sendVerificationEmail } from '../helpers/mailerService.js'
 import { generateAccessToken, generateRefreshToken } from '../lib/tokens/generate.token.js'
+import jwt from 'jsonwebtoken'
+import { env } from '../lib/configs/env.config.js'
 const registerController = async (req, res) => {
     try {
         let { fullname, email, password } = req.body
@@ -143,4 +145,33 @@ const loginController = async (req, res) => {
     }
 } 
 
-export {registerController,verifyEmailController,resendEmailController,loginController}
+const refreshTokenController = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies
+    
+        if (!refreshToken) {
+            return sendResponse(res,401,true,{general:"No refresh token provided"},null)
+        }
+        // Check if the refresh token is valid
+        const user = await UserModal.findOne({ refreshToken })
+        if (!user) {
+            return sendResponse(res,401,true,{general:"Invalid refresh token"},null)
+        }
+        // let decoded refresh token match with env secret
+        let decoded
+        try {
+            decoded = jwt.verify(refreshToken,env.REFRESH_SECRET)
+        } catch(error) {
+            return sendResponse(res,401,true,{general:"Invalid refresh token"},null)
+        }
+
+        // Generate new accessToken
+        const accessToken = generateAccessToken({id:user._id,email:user.email,role:user.role})
+        return sendResponse(res,200,false,{},{accessToken})
+    } catch (error) {
+        return sendResponse(res,500,true,{general:error.message},null)
+        
+    }
+    
+}
+export {registerController,verifyEmailController,resendEmailController,loginController,refreshTokenController}

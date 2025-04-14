@@ -9,5 +9,6 @@ router.post('/register', validateRequest(registerValidation), registerController
 router.post('/login', validateRequest(loginValidation), loginController)
 router.post('/verify-email', verifyEmailController)
 router.post('/resend-verification', resendEmailController)
+router.post('/refreshToken', resendEmailController)
 
 export default router
