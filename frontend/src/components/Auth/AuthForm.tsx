@@ -46,9 +46,13 @@ const AuthForm = (
                             d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
                         />
                     </svg>
-                    <p className="text-black font-semibold">{
-                        isRegister ? "Redirecting to Verify Email..." : !state?.errors?.isVerified ? "Redirecting to Verify Email..." : "Redirecting to Homepage..."
-                    }</p>
+                    <p className="text-black font-semibold">
+                        {isRegister
+                            ? "Redirecting to Verify Email..."
+                            : state?.error === false && state?.data?.accessToken
+                                ? "Redirecting to Homepage..."
+                                : "Redirecting to Verify Email..."}
+                    </p>
                 </div>
             </div>
         ) :
@@ -173,7 +177,7 @@ const AuthForm = (
 
                     {/* Footer */}
                     <p className="text-center text-gray-500 text-sm mt-6">
-                        © 2017-2025
+                        © 2025
                     </p>
                 </div>
             </div>)
