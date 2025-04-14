@@ -17,7 +17,7 @@ export async function authenticateUser(req, res, next) {
         }
         const user = await UserModal.findById(decoded.id).lean();
         if (!user) {
-        return sendResponse(res, 404, true, { general: 'User not found' }, null);
+        return sendResponse(res, 401, true, { general: 'User not found' }, null);
         }
         req.user = user;
         next();
