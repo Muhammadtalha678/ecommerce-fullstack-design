@@ -3,6 +3,7 @@ import { env } from './lib/configs/env.config.js'
 import { connectDb } from './lib/db/connectDb.js'
 import AuthRouter from './routers/auth.router.js'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 const app = express()
 
 app.use(cors({
@@ -13,7 +14,7 @@ app.use(cors({
 }))
 
 app.use(express.json())
-
+app.use(cookieParser())
 app.get('/', (req, res) => {
     return res.send('Hello World')    
 })
