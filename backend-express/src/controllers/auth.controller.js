@@ -2,9 +2,7 @@ import UserModal from '../modals/user.modal.js'
 import { sendResponse } from '../helpers/sendResponse.js'
 import bcrypt from 'bcrypt'
 import { sendVerificationEmail } from '../helpers/mailerService.js'
-import jwt from 'jsonwebtoken'
-import { env } from '../lib/configs/env.config.js'
-import { accessToken, refreshToken } from '../lib/tokens/generate.token.js'
+import { generateAccessToken, generateRefreshToken } from '../lib/tokens/generate.token.js'
 const registerController = async (req, res) => {
     try {
         let { fullname, email, password } = req.body
@@ -31,7 +29,7 @@ const registerController = async (req, res) => {
             return sendResponse(res, 500, true, { general: "Failed to send verification email. Please try again." }, null);
         }
         await newUSer.save()
-        return sendResponse(res,200,false,{},{email:newUSer.email,fullname:newUSer.fullname,message:"User Registered Succesfully, OTP sent to email."})
+        return sendResponse(res,200,false,{},{otpExpiresAt:newUSer.otpExpiresAt,email:newUSer.email,fullname:newUSer.fullname,message:"User Registered Succesfully, OTP sent to email."})
         
     } catch (error) {
         
@@ -49,12 +47,12 @@ const verifyEmailController = async (req, res) => {
             return sendResponse(res,401,true,{email:"User not found"},null)
         }
 
-        // Check if OTP matches and is not expired
-                if (findUser.verificationToken !== otp)  return sendResponse(res, 400, true, {otp:"Invalid OTP"}, null); 
         // check token expire time
-                 if (findUser.otpExpiresAt < Date.now()) 
-                    return sendResponse(res, 400, true, {general:"OTP has expired"}, null);        
+        if (findUser.otpExpiresAt < Date.now()) 
+           return sendResponse(res, 400, true, {general:"OTP has expired"}, null);        
+        // Check if OTP matches and is not expired
         
+        if (findUser.verificationToken !== otp)  return sendResponse(res, 400, true, {otp:"Invalid OTP"}, null); 
                 findUser.verificationToken = undefined;
                 findUser.isVerified = true;
                 await findUser.save();
@@ -103,20 +101,31 @@ const loginController = async (req, res) => {
         let {email, password } = req.body
         
         // find user
-        const user = await UserModal.findOne({email}).lean()
+        const user = await UserModal.findOne({email})
         if (!user) {
             return sendResponse(res,409,true,{email:"User is not registered"},null)
+        }
+        
+        if (!user.isVerified) {
+            return sendResponse(res,409,true,{isVerified:false,otpExpiresAt:user.otpExpiresAt,general:"Please verify your email before logging in."},null)
+            
         }
 
         const isPasswordValid = await bcrypt.compare(password,user.password)
          if (!isPasswordValid) return sendResponse(res, 401, true, { email: "Invalid email or password" }, null);
-         delete user.password
-        const accessToken = accessToken({id:user._id,email:user.email,role:user.role})
-        const refreshToken = refreshToken({id:user._id})
-        
+
+         const accessToken = generateAccessToken({id:user._id,email:user.email,role:user.role})
+         const refreshToken = generateRefreshToken({id:user._id})
+         
          user.refreshToken = refreshToken
          
          await user.save()
+         const userData = {
+             fullname:user.fullname,
+             email:user.email,
+             role: user.role,
+             accessToken
+         }
          
          res.cookie('refreshToken', refreshToken, {
              httpOnly: true,
@@ -125,10 +134,11 @@ const loginController = async (req, res) => {
              maxAge: 7 * 24 * 60 * 60 * 1000,
          })
          
-       return sendResponse(res,200,false,{},{user,accessToken,message:"User Login Successfully"})
+       return sendResponse(res,200,false,{},{...userData,accessToken,message:"User Login Successfully"})
         
     } catch (error) {
-        
+         console.log(error);
+         
         return sendResponse(res,500,true,{ general: error.message },null)
     }
 } 
