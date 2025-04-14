@@ -55,29 +55,47 @@ const VerifyEmail = ({
     }, [state])
 
     const handleResend = async () => {
-        setResendPending(true)
+        setResendPending(true);
         try {
             const res = await fetch(ApiRoutes.resendEmail, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ email }),
-                credentials: 'include'
-            })
+                credentials: 'include', // Remove if endpoint doesn't need auth
+            });
 
-            const data = await res.json()
-            console.log(data);
+            console.log('Response status:', res.status);
+            console.log('Response headers:', res.headers.get('content-type'));
 
-            if (res.ok && data.error === false) {
-                toast.success(data.data?.message || "OTP resent successfully")
-                const newTime = Date.now() + 5 * 60 * 1000
-                setResendAvailableAt(newTime)
-                setTimerKey(newTime)
-
-                // update expiry in localStorage
-                localStorage.setItem("verifyEmail", JSON.stringify({ email, expiry: newTime }))
-            } else {
-                toast.error(data.errors?.general || "Failed to resend OTP.")
+            if (!res.ok) {
+                const contentType = res.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await res.json();
+                    console.log('Error data:', data);
+                    toast.error(data.errors?.email || data.errors?.general || `Server error: ${res.status}`);
+                } else {
+                    toast.error(`Server error: ${res.status}`);
+                }
+                return;
             }
+
+            const contentType = res.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Non-JSON response received');
+                toast.error('Invalid response from server');
+                return;
+            }
+
+            const data = await res.json();
+            console.log('Response data:', data);
+
+            toast.success(data.data?.message || "OTP resent successfully");
+            const newTime = Date.now() + 5 * 60 * 1000;
+            setResendAvailableAt(newTime);
+            setTimerKey(newTime);
+            localStorage.setItem("verifyEmail", JSON.stringify({ email, expiry: newTime }));
         } catch (error) {
             const err = error as Error
             toast.error(err.message || "Something went wrong.")
