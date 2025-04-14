@@ -148,15 +148,12 @@ const loginController = async (req, res) => {
 const refreshTokenController = async (req, res) => {
     try {
         const { refreshToken } = req.cookies
-    
+        // console.log(req.cookies);
+        
         if (!refreshToken) {
             return sendResponse(res,401,true,{general:"No refresh token provided"},null)
         }
-        // Check if the refresh token is valid
-        const user = await UserModal.findOne({ refreshToken })
-        if (!user) {
-            return sendResponse(res,401,true,{general:"Invalid refresh token"},null)
-        }
+        
         // let decoded refresh token match with env secret
         let decoded
         try {
@@ -164,11 +161,21 @@ const refreshTokenController = async (req, res) => {
         } catch(error) {
             return sendResponse(res,401,true,{general:"Invalid refresh token"},null)
         }
+        
+        // Check if the refresh token is valid
+        const user = await UserModal.findById(decoded.id)
+        
+        if (!user || user.refreshToken !== refreshToken) {
+            return sendResponse(res,401,true,{general:"Invalid refresh token"},null)
+        }
+
 
         // Generate new accessToken
         const accessToken = generateAccessToken({id:user._id,email:user.email,role:user.role})
         return sendResponse(res,200,false,{},{accessToken})
     } catch (error) {
+        // console.log(error);
+        
         return sendResponse(res,500,true,{general:error.message},null)
         
     }
