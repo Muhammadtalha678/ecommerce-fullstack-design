@@ -70,7 +70,6 @@ const VerifyEmail = ({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email }),
-                credentials: 'include', // Remove if endpoint doesn't need auth
             });
 
             console.log('Response status:', res.status);
