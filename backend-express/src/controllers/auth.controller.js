@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import { sendVerificationEmail } from '../helpers/mailerService.js'
 import jwt from 'jsonwebtoken'
 import { env } from '../lib/configs/env.config.js'
+import { accessToken, refreshToken } from '../lib/tokens/generate.token.js'
 const registerController = async (req, res) => {
     try {
         let { fullname, email, password } = req.body
@@ -110,8 +111,21 @@ const loginController = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password,user.password)
          if (!isPasswordValid) return sendResponse(res, 401, true, { email: "Invalid email or password" }, null);
          delete user.password
-         const token = jwt.sign({...user},env.AUTH_SECRET)
-       return sendResponse(res,200,false,{},{user,token,message:"User Login Successfully"})
+        const accessToken = accessToken({id:user._id,email:user.email,role:user.role})
+        const refreshToken = refreshToken({id:user._id})
+        
+         user.refreshToken = refreshToken
+         
+         await user.save()
+         
+         res.cookie('refreshToken', refreshToken, {
+             httpOnly: true,
+             secure: process.env.NODE_ENV === 'production' ? true : false,
+             sameSite: 'Strict',
+             maxAge: 7 * 24 * 60 * 60 * 1000,
+         })
+         
+       return sendResponse(res,200,false,{},{user,accessToken,message:"User Login Successfully"})
         
     } catch (error) {
         
