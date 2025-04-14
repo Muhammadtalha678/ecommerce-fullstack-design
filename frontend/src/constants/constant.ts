@@ -6,5 +6,6 @@ export const ApiRoutes = {
     register: `${BASE_URL}/api/auth/register`,
     login: `${BASE_URL}/api/auth/login`,
     verfiyEmail: `${BASE_URL}/api/auth/verify-email`,
-    resendEmail: `${BASE_URL}/api/auth/resend-verification`
+    resendEmail: `${BASE_URL}/api/auth/resend-verification`,
+    refreshToken: `${BASE_URL}/api/auth/refreshToken`,
 }
