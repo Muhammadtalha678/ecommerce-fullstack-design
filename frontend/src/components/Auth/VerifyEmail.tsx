@@ -57,6 +57,13 @@ const VerifyEmail = ({
     const handleResend = async () => {
         setResendPending(true);
         try {
+            if (!ApiRoutes.resendEmail || ApiRoutes.resendEmail.includes('undefined')) {
+                console.error('Invalid resendEmail URL:', ApiRoutes.resendEmail);
+                toast.error('Configuration error: Invalid API URL');
+                return;
+            }
+
+            console.log('Fetching resendEmail:', ApiRoutes.resendEmail);
             const res = await fetch(ApiRoutes.resendEmail, {
                 method: 'POST',
                 headers: {
