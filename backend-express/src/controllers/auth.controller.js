@@ -67,19 +67,18 @@ const resendEmailController = async (req, res) => {
     try {
         let { email } = req.body
 
-        
         // find user
         const findUser = await UserModal.findOne({email})
         if (!findUser) {
             return sendResponse(res,401,true,{email:"User not found"},null)
         }
-
+        
         // 6-digit OTP generate karna
         const verificationToken = Math.floor(100000 + Math.random() * 900000).toString(); 
         
-                findUser.verificationToken = verificationToken;
-                 findUser.otpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes expiration
-                try {
+        findUser.verificationToken = verificationToken;
+        findUser.otpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes expiration
+        try {
             await sendVerificationEmail(email,verificationToken)
             
         } catch (emailError) {
@@ -87,7 +86,8 @@ const resendEmailController = async (req, res) => {
             // await UserModal.findByIdAndDelete(newUSer._id)
             return sendResponse(res, 500, true, { general: "Failed to send verification email. Please try again." }, null);
         }
-                 await findUser.save();
+        await findUser.save();
+        
                         return sendResponse(res, 200, false,{}, {message:"OTP resend successfully"});
         
     } catch (error) {
