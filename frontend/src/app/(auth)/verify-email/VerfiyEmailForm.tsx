@@ -12,7 +12,7 @@ const VerfiyEmailForm = () => {
     const [isRedirecting, setIsRedirecting] = useState(false)
     useEffect(() => {
         if (state) {
-            console.log("Verification Response:", state)
+            // console.log("Verification Response:", state)
 
             if (state.errors?.general) {
                 toast.error(state.errors.general)

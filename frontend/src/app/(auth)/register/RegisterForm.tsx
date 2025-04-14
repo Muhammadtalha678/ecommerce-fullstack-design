@@ -23,10 +23,15 @@ const RegisterForm = () => {
                 if (!state.error) {
                     toast.success(state.data?.message || "Registration Successfull!")
                     const email = state.data?.email;
-                    if (email) {
+                    const otpExpiresAt = state.data?.otpExpiresAt;
+                    if (email && otpExpiresAt) {
+                        localStorage.setItem("verifyEmail", JSON.stringify({
+                            email: email,
+                            expiry: new Date(otpExpiresAt).getTime()
+                        }));
                         setIsRedirecting(true)
                         setTimeout(() => {
-                            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+                            router.push(`/verify-email`);
                         }, 2000);
                     }
 
