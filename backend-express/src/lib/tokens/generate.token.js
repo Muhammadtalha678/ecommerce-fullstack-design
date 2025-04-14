@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 import {env} from '../configs/env.config.js'
-const accessToken = (payload) => {
+const generateAccessToken = (payload) => {
     return jwt.sign(payload,env.AUTH_SECRET,{expiresIn:'15m'})
 }
-const refreshToken = (payload) => {
+const generateRefreshToken = (payload) => {
     return jwt.sign(payload,env.REFRESH_SECRET,{expiresIn:'7d'})
 }
-export {accessToken,refreshToken}
+export {generateAccessToken,generateRefreshToken}
