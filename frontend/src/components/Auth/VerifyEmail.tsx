@@ -64,6 +64,8 @@ const VerifyEmail = ({
             })
 
             const data = await res.json()
+            console.log(data);
+
             if (res.ok && data.error === false) {
                 toast.success(data.data?.message || "OTP resent successfully")
                 const newTime = Date.now() + 5 * 60 * 1000
