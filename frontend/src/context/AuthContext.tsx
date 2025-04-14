@@ -25,7 +25,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (token) {
             fetchUser(token)
                 .then((userData) => {
-                    setUser(userData);
+                    setUser(userData!);
                 })
                 .catch((err) => {
                     toast.error(err?.message || "Session expired or invalid token");
@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
 
             const userData = await fetchUser(token);
-            setUser(userData);
+            setUser(userData!);
             // toast.success("Login successful");
         } catch (err: any) {
             toast.error(err?.message || "Login failed. Please try again.");
