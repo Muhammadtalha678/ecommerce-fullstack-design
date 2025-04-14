@@ -8,7 +8,8 @@ const UserSchema = new Schema(
         verificationToken: { type: String },
         isVerified: { type: Boolean, default: false },
         otpExpiresAt: { type: Date, required: true },
-        role: { type: String, enum: ['admin','user'],default:'user'}
+        role: { type: String, enum: ['admin', 'user'], default: 'user' },
+        refreshToken: { type: String }
     },
     {
         timestamps:true
