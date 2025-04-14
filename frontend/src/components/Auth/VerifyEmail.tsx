@@ -18,6 +18,7 @@ const VerifyEmail = ({
     pending?: boolean,
     isRedirecting: boolean
 }) => {
+    const resendEmailRoute = ApiRoutes.resendEmail
     const router = useRouter()
 
     const [email, setEmail] = useState<string>('')
@@ -57,10 +58,7 @@ const VerifyEmail = ({
     const handleResend = async () => {
         setResendPending(true);
         try {
-            console.log('ApiRoutes in handleResend:', ApiRoutes);
-            console.log('ApiRoutes.resendEmail:', ApiRoutes.resendEmail);
-            console.log('ApiRoutes.register:', ApiRoutes.register);
-            const res = await fetch("https://ecommerce-fullstack-design-backend.vercel.app/api/auth/resend-verification", {
+            const res = await fetch(resendEmailRoute, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,14 +66,10 @@ const VerifyEmail = ({
                 body: JSON.stringify({ email }),
             });
 
-            console.log('Response status:', res.status);
-            console.log('Response headers:', res.headers.get('content-type'));
-
             if (!res.ok) {
                 const contentType = res.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const data = await res.json();
-                    console.log('Error data:', data);
                     toast.error(data.errors?.email || data.errors?.general || `Server error: ${res.status}`);
                 } else {
                     toast.error(`Server error: ${res.status}`);
@@ -91,7 +85,6 @@ const VerifyEmail = ({
             }
 
             const data = await res.json();
-            console.log('Response data:', data);
 
             toast.success(data.data?.message || "OTP resent successfully");
             const newTime = Date.now() + 5 * 60 * 1000;
