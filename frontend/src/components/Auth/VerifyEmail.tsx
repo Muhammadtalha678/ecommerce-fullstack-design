@@ -18,7 +18,6 @@ const VerifyEmail = ({
     pending?: boolean,
     isRedirecting: boolean
 }) => {
-    const resendEmailRoute = ApiRoutes.resendEmail
     const router = useRouter()
 
     const [email, setEmail] = useState<string>('')
@@ -58,14 +57,10 @@ const VerifyEmail = ({
     const handleResend = async () => {
         setResendPending(true);
         try {
-            if (!resendEmailRoute || resendEmailRoute.includes('undefined')) {
-                console.error('Invalid resendEmail URL:', resendEmailRoute);
-                toast.error('Configuration error: Invalid API URL');
-                return;
-            }
-
-            console.log('Fetching resendEmail:', resendEmailRoute);
-            const res = await fetch(resendEmailRoute, {
+            console.log('ApiRoutes in handleResend:', ApiRoutes);
+            console.log('ApiRoutes.resendEmail:', ApiRoutes.resendEmail);
+            console.log('ApiRoutes.register:', ApiRoutes.register);
+            const res = await fetch("https://ecommerce-fullstack-design-backend.vercel.app/api/auth/resend-verification", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
