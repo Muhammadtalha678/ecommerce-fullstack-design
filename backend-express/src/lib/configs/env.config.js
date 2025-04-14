@@ -7,5 +7,6 @@ export const env = {
     EMAIL_PORT:process.env.EMAIL_PORT,
     EMAIL_USER:process.env.EMAIL_USER,
     EMAIL_PASS: process.env.EMAIL_PASS,
-    AUTH_SECRET:process.env.AUTH_SECRET 
+    AUTH_SECRET:process.env.AUTH_SECRET, 
+    REFRESH_SECRET:process.env.AUTH_SECRET 
 }
