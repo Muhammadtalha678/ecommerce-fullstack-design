@@ -8,5 +8,7 @@ export const ApiRoutes = {
     resendEmail: `${BASE_URL}/api/auth/resend-verification`,
     refreshToken: `${BASE_URL}/api/auth/refreshToken`,
     user: `${BASE_URL}/api/user/userInfo`,
+
+    addProduct: `${BASE_URL}/api/product/addProduct`
 }
 

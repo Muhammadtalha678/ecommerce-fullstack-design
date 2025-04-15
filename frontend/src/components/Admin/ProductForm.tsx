@@ -1,78 +1,126 @@
 'use client'
 
-import React, { useState } from 'react'
-import toast from 'react-hot-toast'
+import { ApiResponse } from '@/interfaces/Auth';
+import React, { ChangeEvent } from 'react'
 
-const ProductForm = ({ initialData }: { initialData?: any }) => {
-    const [form, setForm] = useState({
-        name: initialData?.name || '',
-        price: initialData?.price || '',
-        image: initialData?.image || ''
-    })
+interface FormValues {
+    name?: string
+    price?: string
+    image?: string
+    description?: string
+    category?: string
+    stock?: string
+}
 
-    const isEdit = !!initialData
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const url = isEdit ? `/api/products/${initialData._id}` : '/api/products'
-        const method = isEdit ? 'PUT' : 'POST'
-
-        try {
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
-            })
-
-            if (!res.ok) throw new Error('Failed to submit')
-
-            toast.success(isEdit ? 'Product updated!' : 'Product added!')
-        } catch (err) {
-            toast.error('Something went wrong!')
-        }
-    }
-
+const ProductForm = ({ action, state, pending, isEdit = false, FormValues, onchange }:
+    {
+        action?: (formData: FormData) => void,
+        state?: ApiResponse,
+        pending?: boolean | undefined,
+        isEdit?: boolean,
+        FormValues?: FormValues,
+        onchange?: (e: ChangeEvent<HTMLInputElement>) => void
+    }) => {
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form action={action} className="space-y-4">
             <div>
                 <label className="block mb-1 font-medium">Product Name</label>
                 <input
                     type="text"
                     name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
+                    value={FormValues?.name}
+                    onChange={onchange}
+                    // required
                     className="w-full border rounded px-3 py-2"
                 />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.name && state.errors.name
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Description</label>
+                <input
+                    type="number"
+                    name="description"
+                    value={FormValues?.description}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.description && state.errors.description
+                    }
+                </p>
             </div>
             <div>
                 <label className="block mb-1 font-medium">Price</label>
                 <input
-                    type="number"
+                    type="text"
                     name="price"
-                    value={form.price}
-                    onChange={handleChange}
-                    required
+                    value={FormValues?.price}
+                    onChange={onchange}
+                    // required
                     className="w-full border rounded px-3 py-2"
                 />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.price && state.errors.price
+                    }
+                </p>
             </div>
             <div>
                 <label className="block mb-1 font-medium">Image URL</label>
                 <input
                     type="text"
                     name="image"
-                    value={form.image}
-                    onChange={handleChange}
-                    required
+                    value={FormValues?.image}
+                    onChange={onchange}
+                    // required
                     className="w-full border rounded px-3 py-2"
                 />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.image && state.errors.image
+                    }
+                </p>
             </div>
-            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                {isEdit ? 'Update Product' : 'Add Product'}
+            <div>
+                <label className="block mb-1 font-medium">Category</label>
+                <input
+                    type="text"
+                    name="category"
+                    value={FormValues?.category}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.category && state.errors.category
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Stock</label>
+                <input
+                    type="text"
+                    name="stock"
+                    value={FormValues?.stock}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.stock && state.errors.stock
+                    }
+                </p>
+            </div>
+            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" disabled={pending}>
+                {isEdit ? 'Update Product' : pending ? "Processing..." : 'Add Product'}
             </button>
         </form>
     )
