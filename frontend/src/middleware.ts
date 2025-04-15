@@ -29,6 +29,8 @@ export async function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL('/', request.url))
             }
         } catch (error) {
+            console.log("middle ware protecte error", error);
+
             return NextResponse.redirect(new URL('/login', request.url))
 
         }
