@@ -4,6 +4,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import Image from 'next/image'
 import Search from './Search';
 import { topNavLink } from '@/lib/topNavLinks';
+import Link from 'next/link';
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -47,10 +48,10 @@ export default function Header() {
                 <div className="hidden lg:flex gap-4 text-gray-600">
                     {
                         topNavLink.map((nav, i: number) => {
-                            return <div key={i + 1} className="flex flex-col items-center gap-1">
+                            return <Link href={nav.path} key={i + 1} className="flex flex-col items-center gap-1">
                                 <nav.icons color='#8B96A5' />
                                 <span className="custom-font-regular text-[12px] text-[#8B96A5]">{nav.name}</span>
-                            </div>
+                            </Link>
                         })
                     }
 
