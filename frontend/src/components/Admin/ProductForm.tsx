@@ -111,7 +111,7 @@ const ProductForm = ({ action, state, pending, isEdit = false, FormValues, oncha
                     type="file"
                     name="bannerImage"
                     accept="image/*"
-                    required
+                    // required
                     className="w-full border rounded px-3 py-2"
                 />
             </div>
@@ -124,7 +124,7 @@ const ProductForm = ({ action, state, pending, isEdit = false, FormValues, oncha
                     name="detailImages"
                     accept="image/*"
                     multiple
-                    required
+                    // required
                     className="w-full border rounded px-3 py-2"
                 />
             </div>
