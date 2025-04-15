@@ -5,21 +5,21 @@ export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
     // console.log(token);
 
-    const authPaths = ['/login', '/register', '/verifyEmail']
+    const authPaths = ['/login', '/register', '/verify-email']
     const protectedPaths = ['/profile', '/cart', '/admin']
 
 
     if (token && authPaths.includes(pathname)) {
         return NextResponse.redirect(new URL('/', request.url))
     }
-    // console.log(protectedPaths.includes(pathname));
+    console.log(pathname);
     if (protectedPaths.includes(pathname)) {
         if (!token) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
         try {
             const userData = await fetchUser(token)
-            console.log(userData);
+            // console.log(userData);
 
             if (!userData) {
                 throw new Error('No user data returned');
@@ -30,8 +30,14 @@ export async function middleware(request: NextRequest) {
             }
         } catch (error) {
             console.log("middle ware protecte error", error);
-
-            return NextResponse.redirect(new URL('/login', request.url))
+            const response = NextResponse.redirect(new URL('/login', request.url))
+            response.cookies.set('token', '', {
+                expires: new Date(0),
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+            });
+            return response
 
         }
     }
@@ -39,6 +45,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/login', '/register', '/verifyEmail', '/profile', '/cart', '/admin/:path*']
+    matcher: ['/login', '/register', '/verify-email', '/profile', '/cart', '/admin/:path*']
 }
 
