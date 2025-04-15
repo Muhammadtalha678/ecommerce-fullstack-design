@@ -32,7 +32,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         setUser(userData);
                     }
                     else {
-                        console.warn('No user data returned');
+                        // console.warn('No user data returned');
                         Cookie.remove('token');
                     }
                 })
