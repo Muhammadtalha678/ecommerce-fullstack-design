@@ -2,7 +2,6 @@
 
 import { ApiRoutes } from "@/constants/constant";
 import { ApiResponse } from "@/interfaces/Auth";
-import { fetchUser } from "@/lib/api/fetchUser";
 import { cookies } from 'next/headers'
 
 export const register = async (state: ApiResponse | undefined, formData: FormData): Promise<ApiResponse> => {
