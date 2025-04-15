@@ -11,6 +11,6 @@ const multipleUpload = upload.fields([
   { name: 'bannerImage', maxCount: 1 },
   { name: 'detailImages', maxCount: 4 },
 ]);
-routers.post('/addProduct', authenticateUser,authorizeAdmin,validateRequest(ProductValidation),multipleUpload, addProductController)
+routers.post('/addProduct', authenticateUser,authorizeAdmin,multipleUpload,validateRequest(ProductValidation), addProductController)
 
 export default routers
