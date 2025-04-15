@@ -14,7 +14,6 @@ const AddProduct = () => {
     const [formValues, setFormValues] = useState({
         name: '',
         price: '',
-        image: '',
         description: '',
         category: '',
         stock: '',
@@ -41,7 +40,7 @@ const AddProduct = () => {
                 }
             }
         } else if (state && !state.error) {
-            toast.success('Product added successfully');
+            toast.success(state?.data?.message || "Product added successfully");
             router.push('/admin/products');
         }
     }, [state]);
