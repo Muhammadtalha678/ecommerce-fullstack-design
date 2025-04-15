@@ -157,14 +157,6 @@ export const addProduct = async (
 ): Promise<ApiResponse> => {
     const accessToken = (await cookies()).get('token')?.value;
 
-    const productData = {
-        name: formData.get('name'),
-        price: formData.get('price'),
-        image: formData.get('image'),
-        description: formData.get('description'),
-        category: formData.get('category'),
-        stock: formData.get('stock'),
-    };
 
     try {
         const controller = new AbortController();
@@ -174,21 +166,20 @@ export const addProduct = async (
             signal: controller.signal,
             headers: {
                 Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
             },
             method: 'POST',
-            body: JSON.stringify(productData),
+            body: formData,
         });
 
         clearTimeout(timeoutId);
-        console.log('addProduct /api/products status:', response.status);
+        // console.log('addProduct /api/products status:', response.status);
 
         if (response.status === 401) {
             const refreshRes = await fetch(ApiRoutes.refreshToken, {
                 method: 'POST',
                 credentials: 'include',
             });
-            console.log('addProduct /api/auth/refresh status:', refreshRes.status);
+            // console.log('addProduct /api/auth/refresh status:', refreshRes.status);
 
             if (!refreshRes.ok) {
                 const errData = await refreshRes.json();
@@ -223,16 +214,15 @@ export const addProduct = async (
                 signal: controller.signal,
                 headers: {
                     Authorization: `Bearer ${newToken}`, // Use new token
-                    'Content-Type': 'application/json',
                 },
                 method: 'POST',
-                body: JSON.stringify(productData),
+                body: formData,
             });
-            console.log('addProduct retry /api/products status:', response.status);
+            // console.log('addProduct retry /api/products status:', response.status);
         }
 
         const data = await response.json();
-        console.log('addProduct response data:', data);
+        // console.log('addProduct response data:', data);
 
         if (!response.ok) {
             return {
