@@ -129,7 +129,7 @@ const loginController = async (req, res) => {
              accessToken
          }
         
-         res.cookie('refreshToken', newRefreshToken, { // If needed
+         res.cookie('refreshToken', refreshToken, { // If needed
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',
@@ -150,7 +150,7 @@ const loginController = async (req, res) => {
 const refreshTokenController = async (req, res) => {
     try {
         const { refreshToken } = req.cookies
-        console.log("req.cookies",req.cookies);
+        console.log("req.cookies",refreshToken);
         
         if (!refreshToken) {
             return sendResponse(res,401,true,{general:"No refresh token provided"},null)
