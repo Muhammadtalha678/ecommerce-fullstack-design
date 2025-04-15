@@ -20,7 +20,7 @@ export const fetchUser = async (accessToken: string) => {
             })
             if (!refreshRes.ok) {
                 const errData = await refreshRes.json()
-                throw new Error(errData.errors.message || "Session expired");
+                throw new Error(errData.errors?.general || "Session expired");
             }
             const refreshData = await refreshRes.json();
             const newToken = refreshData.data?.accessToken
