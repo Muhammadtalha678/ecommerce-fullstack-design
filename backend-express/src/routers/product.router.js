@@ -4,9 +4,13 @@ import { addProductController } from '../controllers/product.controller.js'
 import { validateRequest } from '../middlewares/validateRequest.middleware.js'
 import { ProductValidation } from '../lib/validations/product.validation.js'
 import { authorizeAdmin } from '../middlewares/authorizeAdmin.middleware.js'
-
+import {upload} from '../middlewares/upload.middleware.js'
 const routers = express.Router()
 
-routers.post('/addProduct', authenticateUser,authorizeAdmin,validateRequest(ProductValidation), addProductController)
+const multipleUpload = upload.fields([
+  { name: 'bannerImage', maxCount: 1 },
+  { name: 'detailImages', maxCount: 4 },
+]);
+routers.post('/addProduct', authenticateUser,authorizeAdmin,validateRequest(ProductValidation),multipleUpload, addProductController)
 
 export default routers
