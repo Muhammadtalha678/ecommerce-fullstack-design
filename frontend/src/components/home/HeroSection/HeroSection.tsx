@@ -1,10 +1,10 @@
 'use client'
 import Image from 'next/image';
 import { useState } from 'react';
-
+import { useAuth } from '@/context/AuthContext'
 export default function HeroSection() {
     const [selectedCategory, setSelectedCategory] = useState("Automobiles");
-
+    const { user } = useAuth()
     const categories = [
         "Automobiles", "Clothes and wear", "Home interiors", "Computer and tech",
         "Tools, equipments", "Sports and outdoor", "Animal and pets",
@@ -55,10 +55,17 @@ export default function HeroSection() {
                 {/* Right Sidebar - User & Offers */}
                 <div className="space-y-5 flex flex-col h-full w-full lg:w-auto lg:col-span-2">
                     <div className="p-4 flex flex-col text-center bg-[#E3F0FF] flex-grow">
-                        <p className="custom-font-regular text-[16px]">Hi, user</p>
-                        <p className="custom-font-regular text-[16px]">Let’s get started</p>
-                        <button className="text-[13px] custom-font-medium mt-2 w-full bg-blue-500 text-white py-2 rounded-md">Join now</button>
-                        <button className="text-[13px] custom-font-medium mt-2 w-full border py-2 rounded-md">Log in</button>
+                        <p className="custom-font-regular text-[16px]">Hi, {user?.fullname}</p>
+                        {
+                            !user &&
+                            (
+                                <>
+                                    <p className="custom-font-regular text-[16px]">Let’s get started</p>
+                                    <button className="text-[13px] custom-font-medium mt-2 w-full bg-blue-500 text-white py-2 rounded-md">Join now</button>
+                                    <button className="text-[13px] custom-font-medium mt-2 w-full border py-2 rounded-md">Log in</button>
+                                </>
+                            )
+                        }
                     </div>
                     <div className="bg-orange-400 text-white p-4 rounded-md shadow-md">
                         <p className='custom-font-regular text-[16px]'>Get US $10 off with a new supplier</p>
