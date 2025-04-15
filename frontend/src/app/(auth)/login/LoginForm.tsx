@@ -4,10 +4,10 @@ import React, { ChangeEvent, useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { login } from '@/actions/actions'
 import toast from 'react-hot-toast'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 import { useAuth } from '@/context/AuthContext'
 const LoginForm = () => {
-    const { loginUser } = useAuth()
+    const { loginUser, loading } = useAuth()
     const router = useRouter()
     const [state, loginAction, pending] = useActionState(login, undefined)
     const [formValues, setFormValues] = useState({
@@ -41,19 +41,21 @@ const LoginForm = () => {
             else {
                 if (!state.error && state.data?.accessToken) {
                     // Cookies.set('token', state.data?.accessToken)
-                    loginUser(state.data?.accessToken)
-                    toast.success(state.data?.message || "Login Successfull!")
-
                     setIsRedirecting(true)
-                    setTimeout(() => {
-                        router.push(`/`);
-                    }, 2000)
+                    loginUser(state.data?.accessToken)
                 }
 
             }
 
         }
-    }, [state, router, formValues.email, loginUser])
+    }, [state, formValues.email])
+
+    useEffect(() => {
+        if (!loading && isRedirecting) {
+            toast.success("User Login Successfully")
+            router.push(`/`);
+        }
+    }, [loading, isRedirecting, router])
     return (
         <AuthForm isRegister={false} FormValues={formValues} onChange={onChange} action={loginAction} state={state} pending={pending || isRedirecting} isRedirecting={isRedirecting} />
     )
