@@ -38,7 +38,7 @@ const ProductTable = ({ products }: { products: Product[] }) => {
                         <td className="p-3">${product.price}</td>
                         <td className="p-3">{product.category}</td>
                         <td className="p-3 flex items-center gap-4">
-                            <Link href={`/products/edit/${product.id}`}>
+                            <Link href={`/admin/products/edit/${product.id}`}>
                                 <FiEdit className="text-blue-600 hover:text-blue-800 cursor-pointer" />
                             </Link>
                             <button>
