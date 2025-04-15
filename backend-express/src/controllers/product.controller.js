@@ -2,38 +2,39 @@ import { sendResponse } from '../helpers/sendResponse.js'
 import ProductModal from '../modals/product.modal.js'
 const addProductController = async (req, res) => {
   try {
+   const files = req.files;
+
+    if (!files || !files.bannerImage || files.bannerImage.length === 0) {
+      return res.status(400).json({ errors: { bannerImage: 'Banner image is required' } });
+    }
+
+    if (!files.detailImages || files.detailImages.length < 1) {
+      return res.status(400).json({ errors: { detailImages: 'At least 1 detail image is required' } });
+    }
+
+    if (files.detailImages.length > 4) {
+      return res.status(400).json({ errors: { detailImages: 'Maximum of 4 detail images allowed' } });
+    }
+
+    // Text fields from body
     const { name, price, description, category, stock } = req.body;
-    const files = req.files;
 
-    if (!files || !files.bannerImage || !files.detailImages || files.detailImages.length < 4) {
-      return sendResponse(res, 400, true, { image: 'Please upload all required images' }, null);
-    }
+    // Access files like:
+    const bannerImageFile = files.bannerImage[0];
+    const detailImagesFiles = files.detailImages;
 
-    // Upload banner image
-    const bannerResult = await cloudinary.uploader.upload(files.bannerImage[0].path, {
-      folder: 'products/bannerImages',
-    });
-
-    // Upload detail images
-    const detailImageUrls = [];
-    for (const file of files.detailImages) {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'products/detailImages',
-      });
-      detailImageUrls.push(result.secure_url);
-    }
-
-    const product = new ProductModal({
+    const savedProduct = await ProductModal.create({
       name,
       price,
       description,
       category,
       stock,
-      bannerImage: bannerResult.secure_url,
-      detailImages: detailImageUrls,
+      bannerImage: bannerImageFile.filename,
+      detailImages: detailImagesFiles.map((img) => img.filename),
     });
 
-    await product.save();
+
+    await savedProduct.save();
     return sendResponse(res, 200, false, {}, { message: 'Product added successfully' });
   } catch (error) {
     console.log(error);
