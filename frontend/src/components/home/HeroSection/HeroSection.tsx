@@ -62,7 +62,7 @@ export default function HeroSection() {
                             (
                                 <>
                                     <p className="custom-font-regular text-[16px]">Let’s get started</p>
-                                    <Link href={'/regiser'} className="text-[13px] custom-font-medium mt-2 w-full bg-blue-500 text-white py-2 rounded-md">Join now</Link>
+                                    <Link href={'/register'} className="text-[13px] custom-font-medium mt-2 w-full bg-blue-500 text-white py-2 rounded-md">Join now</Link>
                                     <Link href={'/login'} className="text-[13px] custom-font-medium mt-2 w-full border py-2 rounded-md">Log in</Link>
                                 </>
                             )
