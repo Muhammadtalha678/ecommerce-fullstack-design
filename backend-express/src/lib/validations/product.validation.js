@@ -13,12 +13,6 @@ export const ProductValidation = Joi.object({
     'any.required': 'Price is required',
   }),
 
-  image: Joi.string().uri().required().messages({
-    'string.base': 'Image must be a valid URL',
-    'string.uri': 'Image must be a valid URL',
-    'any.required': 'Product image is required',
-  }),
-
   description: Joi.string().min(10).required().messages({
     'string.base': 'Description must be a string',
     'string.empty': 'Description is required',
@@ -38,4 +32,26 @@ export const ProductValidation = Joi.object({
     'number.min': 'Stock cannot be negative',
     'any.required': 'Stock is required',
   }),
+
+  bannerImage: Joi.string().uri().required().messages({
+    'string.base': 'Banner image URL must be a string',
+    'string.uri': 'Banner image must be a valid URL',
+    'any.required': 'Banner image is required',
+  }),
+
+  detailImages: Joi.array().items(
+    Joi.string().uri().messages({
+      'string.base': 'Each detail image URL must be a string',
+      'string.uri': 'Each detail image must be a valid URL',
+    })
+  )
+    .min(1)
+    .max(4)
+    .required()
+    .messages({
+      'array.base': 'Detail images must be an array of URLs',
+      'array.min': 'At least 1 detail image is required',
+      'array.max': 'Maximum of 4 detail images allowed',
+      'any.required': 'Detail images are required',
+    }),
 })
