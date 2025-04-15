@@ -52,7 +52,7 @@ const LoginForm = () => {
 
     useEffect(() => {
         if (!loading && isRedirecting) {
-            toast.success("User Login Successfully")
+            // toast.success("User Login Successfully")
             router.push(`/`);
         }
     }, [loading, isRedirecting, router])
