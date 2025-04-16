@@ -1,16 +1,9 @@
+import { Product } from '@/interfaces/Product';
 import React from 'react';
 import { FaStar, FaHeart } from 'react-icons/fa';
 
 interface ProductCardProps {
-    product: {
-        image: string;
-        title: string;
-        price: number;
-        originalPrice?: number;
-        rating: number;
-        orders?: number;
-        description?: string;
-    };
+    product: Product;
     view: 'grid' | 'list';
 }
 
@@ -47,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, view }) => {
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center space-x-2">
                                 <span className="text-lg font-bold text-gray-900">
-                                    ${product.price.toFixed(2)}
+                                    ${product.price}
                                 </span>
                                 {product.originalPrice && (
                                     <span className="text-sm text-gray-500 line-through">
@@ -64,14 +57,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, view }) => {
                             {[...Array(5)].map((_, i) => (
                                 <FaStar
                                     key={i}
-                                    className={`${i < Math.floor(product.rating / 2)
+                                    className={`${i < Math.floor(product.rating! / 2)
                                         ? 'text-yellow-400'
                                         : 'text-gray-300'
                                         } text-sm`}
                                 />
                             ))}
                             <span className="ml-1 text-sm text-gray-600">
-                                {product.rating.toFixed(1)}
+                                {product.rating!.toFixed(1)}
                             </span>
                         </div>
 
@@ -95,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, view }) => {
                         {/* Price */}
                         <div className="flex items-center space-x-2 mb-2">
                             <span className="text-lg font-bold text-gray-900">
-                                ${product.price.toFixed(2)}
+                                ${product.price}
                             </span>
                             {product.originalPrice && (
                                 <span className="text-sm text-gray-500 line-through">
@@ -110,14 +103,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, view }) => {
                                 {[...Array(5)].map((_, i) => (
                                     <FaStar
                                         key={i}
-                                        className={`${i < Math.floor(product.rating / 2)
+                                        className={`${i < Math.floor(product.rating! / 2)
                                             ? 'text-yellow-400'
                                             : 'text-gray-300'
                                             } text-sm`}
                                     />
                                 ))}
                                 <span className="ml-1 text-sm text-gray-600">
-                                    {product.rating.toFixed(1)}
+                                    {product.rating!.toFixed(1)}
                                 </span>
                             </div>
                             <span className="text-sm text-gray-600">
