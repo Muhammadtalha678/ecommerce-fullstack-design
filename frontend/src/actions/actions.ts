@@ -218,7 +218,7 @@ export const addProduct = async (
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        let response = await fetch(ApiRoutes.addProduct, {
+        const response = await fetch(ApiRoutes.addProduct, {
             signal: controller.signal,
             headers: {
                 Authorization: `Bearer ${accessToken}`,
