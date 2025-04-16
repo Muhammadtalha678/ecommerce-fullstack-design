@@ -11,7 +11,7 @@ export const fetchUser = async (accessToken: string) => {
             },
             credentials: "include",
         })
-        console.log(response.status);
+        // console.log(response.status);
 
         if (response.status === 401) {
             const refreshRes = await fetch(ApiRoutes.refreshToken, {
@@ -42,7 +42,7 @@ export const fetchUser = async (accessToken: string) => {
             });
         }
         const data = await response.json();
-        console.log("data=>>>>>>>>>", data);
+        // console.log("data=>>>>>>>>>", data);
 
         if (!response.ok) {
             throw new Error(data.errors?.general || "Something went wrong");

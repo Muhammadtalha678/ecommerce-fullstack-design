@@ -63,7 +63,7 @@ const ProductForm = ({
                 <input
                     type="text"
                     name="name"
-                    value={FormValues?.description}
+                    value={FormValues?.name}
                     onChange={onchange}
                     // required
                     className="w-full border rounded px-3 py-2"
