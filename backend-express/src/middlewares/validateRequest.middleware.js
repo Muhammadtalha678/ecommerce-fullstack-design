@@ -2,7 +2,7 @@ import { sendResponse } from "../helpers/sendResponse.js"
 
 export const validateRequest = (validationSchema) => (req, res, next) => {
     const { error } = validationSchema.validate(req.body, { abortEarly: false })
-    console.log(error);
+    // console.log(error);
     
     if (error) {
          // Transform Joi error details to field-wise messages
