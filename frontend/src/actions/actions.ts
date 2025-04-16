@@ -156,6 +156,9 @@ export const addProduct = async (
     formData: FormData
 ): Promise<ApiResponse> => {
 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif'];
+
     const productData = {
         name: formData.get('name') as string | null,
         price: formData.get('price') as string | null,
@@ -166,14 +169,9 @@ export const addProduct = async (
         detailImages: formData.getAll('detailImages') as File[],
     };
 
-    console.log('productData:', {
-        ...productData,
-        bannerImage: productData.bannerImage?.name,
-        detailImages: productData.detailImages.map((f) => f.name),
-    });
-
-    // Client-side validation
     const errors: { [key: string]: string | undefined } = {};
+
+    // Basic validation
     if (!productData.name) errors.name = 'Product name is required';
     if (!productData.price) errors.price = 'Price is required';
     if (!productData.description) errors.description = 'Description is required';
@@ -184,12 +182,26 @@ export const addProduct = async (
     if (productData.detailImages.length !== 4)
         errors.detailImages = 'Exactly 4 detail images are required';
 
-    // Validate file types
-    if (productData.bannerImage && !productData.bannerImage.type.startsWith('image/')) {
-        errors.bannerImage = 'Only image files are allowed';
+    // Validate banner image
+    if (productData.bannerImage) {
+        const banner = productData.bannerImage;
+        if (!ACCEPTED_IMAGE_TYPES.includes(banner.type)) {
+            errors.bannerImage = 'Only JPG, PNG, or image files are allowed';
+        } else if (banner.size > MAX_FILE_SIZE) {
+            errors.bannerImage = 'Banner image must be less than or equal to 5MB';
+        }
     }
-    if (productData.detailImages.some((file) => !file.type.startsWith('image/'))) {
-        errors.detailImages = 'Only image files are allowed';
+
+    // Validate detail images
+    for (const image of productData.detailImages) {
+        if (!ACCEPTED_IMAGE_TYPES.includes(image.type)) {
+            errors.detailImages = 'All detail images must be image files (JPG, PNG, etc.)';
+            break;
+        }
+        if (image.size > MAX_FILE_SIZE) {
+            errors.detailImages = 'Each detail image must be less than or equal to 5MB';
+            break;
+        }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -199,7 +211,9 @@ export const addProduct = async (
             data: null,
         };
     }
+
     const accessToken = (await cookies()).get('token')?.value;
+
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -214,19 +228,15 @@ export const addProduct = async (
         });
 
         clearTimeout(timeoutId);
-        // console.log('addProduct /api/products status:', response.status);
 
         if (response.status === 401) {
             const refreshRes = await fetch(ApiRoutes.refreshToken, {
                 method: 'POST',
                 credentials: 'include',
             });
-            // console.log('addProduct /api/auth/refresh status:', refreshRes.status);
 
             if (!refreshRes.ok) {
                 const errData = await refreshRes.json();
-                console.log('Refresh error data:', errData);
-                // Clear token to prevent AuthContext loop
                 (await cookies()).delete('token');
                 return {
                     error: true,
@@ -237,6 +247,7 @@ export const addProduct = async (
 
             const refreshData = await refreshRes.json();
             const newToken = refreshData.data?.accessToken;
+
             if (!newToken) {
                 (await cookies()).delete('token');
                 return {
@@ -255,13 +266,13 @@ export const addProduct = async (
             response = await fetch(ApiRoutes.addProduct, {
                 signal: controller.signal,
                 headers: {
-                    Authorization: `Bearer ${newToken}`, // Use new token
+                    Authorization: `Bearer ${newToken}`,
                 },
                 method: 'POST',
                 body: formData,
             });
-            // console.log('addProduct retry /api/products status:', response.status);
         }
+
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             const text = await response.text();
@@ -274,7 +285,6 @@ export const addProduct = async (
         }
 
         const data = await response.json();
-        // console.log('addProduct response data:', data);
 
         if (!response.ok) {
             return {
