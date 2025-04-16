@@ -46,7 +46,6 @@ const addProductController = async (req, res) => {
 
     return sendResponse(res, 200, false, {}, { product: savedProduct, message: 'Product added successfully' });
   } catch (error) {
-    console.error('Add product error:', error.message, error.stack);
     if (error instanceof multer.MulterError) {
       return sendResponse(res, 400, true, { general: error.message }, null);
     }
@@ -57,4 +56,13 @@ const addProductController = async (req, res) => {
   }
 };
 
-export { addProductController };
+const getProductController = async (req, res) => {
+  try {
+    const products = await ProductModal.find()
+    return sendResponse(res, 200, true, {}, { message: "Product fetch successfully",products});
+
+  } catch (error) {
+    return sendResponse(res, 500, true, { general: error.message }, null);
+  }
+}
+export { addProductController,getProductController };
