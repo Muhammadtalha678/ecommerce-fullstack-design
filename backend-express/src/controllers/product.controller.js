@@ -59,7 +59,7 @@ const addProductController = async (req, res) => {
 const getProductController = async (req, res) => {
   try {
     const products = await ProductModal.find()
-    return sendResponse(res, 200, true, {}, { message: "Product fetch successfully",products});
+    return sendResponse(res, 200, false, {}, { message: "Product fetch successfully",products});
 
   } catch (error) {
     return sendResponse(res, 500, true, { general: error.message }, null);
