@@ -1,7 +1,8 @@
 'use client'
 
 import { ApiResponse } from '@/interfaces/Auth';
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import toast from 'react-hot-toast';
 
 interface FormValues {
     name?: string
@@ -20,6 +21,15 @@ const ProductForm = ({ action, state, pending, isEdit = false, FormValues, oncha
         FormValues?: FormValues,
         onchange?: (e: ChangeEvent<HTMLInputElement>) => void
     }) => {
+    const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+    const [detailPreviews, setDetailPreviews] = useState<string[]>([]);
+    const [detailError, setDetailError] = useState<string | null>(null);
+    useEffect(() => {
+        return () => {
+            if (bannerPreview) URL.revokeObjectURL(bannerPreview);
+            detailPreviews.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [bannerPreview, detailPreviews]);
     return (
         <form action={action} className="space-y-4" encType="multipart/form-data"
         >
@@ -112,8 +122,25 @@ const ProductForm = ({ action, state, pending, isEdit = false, FormValues, oncha
                     name="bannerImage"
                     accept="image/*"
                     // required
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                            setBannerPreview(URL.createObjectURL(file));
+                        }
+                    }}
                     className="w-full border rounded px-3 py-2"
                 />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.bannerImage && state.errors.bannerImage
+                    }
+                </p>
+                {bannerPreview && (
+                    <div className="mt-2">
+                        <p className="text-sm">Selected:</p>
+                        <img src={bannerPreview} alt="Banner preview" className="max-w-xs rounded" />
+                    </div>
+                )}
             </div>
 
             {/* DETAIL IMAGES */}
@@ -125,11 +152,46 @@ const ProductForm = ({ action, state, pending, isEdit = false, FormValues, oncha
                     accept="image/*"
                     multiple
                     // required
+                    onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        if (files.length !== 4) {
+                            setDetailError("Please select exactly 4 images.");
+                            setDetailPreviews([]);
+                            return;
+                        }
+                        const previews = files.map(file => URL.createObjectURL(file));
+                        setDetailPreviews(previews);
+                        setDetailError(null); // Clear error if valid
+                    }}
                     className="w-full border rounded px-3 py-2"
                 />
+                <p className="text-red-500 text-sm mt-6">
+                    {
+                        detailError || (state?.error && state.errors.detailImages && state.errors.detailImages)
+                    }
+                </p>
+                {detailPreviews.length > 0 && (
+                    <div className="mt-2">
+                        <p className="text-sm">Selected:</p>
+                        <div className="flex flex-wrap gap-2">
+                            {detailPreviews.map((url, index) => (
+                                <img
+                                    key={index}
+                                    src={url}
+                                    alt={`Detail preview ${index + 1}`}
+                                    className="max-w-[100px] rounded"
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" disabled={pending}>
+            <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                disabled={pending}
+            >
                 {isEdit ? 'Update Product' : pending ? "Processing..." : 'Add Product'}
             </button>
         </form>

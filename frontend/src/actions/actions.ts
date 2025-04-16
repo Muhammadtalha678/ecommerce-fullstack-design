@@ -155,9 +155,51 @@ export const addProduct = async (
     state: ApiResponse | undefined,
     formData: FormData
 ): Promise<ApiResponse> => {
+
+    const productData = {
+        name: formData.get('name') as string | null,
+        price: formData.get('price') as string | null,
+        description: formData.get('description') as string | null,
+        category: formData.get('category') as string | null,
+        stock: formData.get('stock') as string | null,
+        bannerImage: formData.get('bannerImage') as File | null,
+        detailImages: formData.getAll('detailImages') as File[],
+    };
+
+    console.log('productData:', {
+        ...productData,
+        bannerImage: productData.bannerImage?.name,
+        detailImages: productData.detailImages.map((f) => f.name),
+    });
+
+    // Client-side validation
+    const errors: { [key: string]: string | undefined } = {};
+    if (!productData.name) errors.name = 'Product name is required';
+    if (!productData.price) errors.price = 'Price is required';
+    if (!productData.description) errors.description = 'Description is required';
+    if (!productData.category) errors.category = 'Category is required';
+    if (!productData.stock) errors.stock = 'Stock is required';
+    if (!productData.bannerImage || productData.bannerImage.size === 0)
+        errors.bannerImage = 'Banner image is required';
+    if (productData.detailImages.length !== 4)
+        errors.detailImages = 'Exactly 4 detail images are required';
+
+    // Validate file types
+    if (productData.bannerImage && !productData.bannerImage.type.startsWith('image/')) {
+        errors.bannerImage = 'Only image files are allowed';
+    }
+    if (productData.detailImages.some((file) => !file.type.startsWith('image/'))) {
+        errors.detailImages = 'Only image files are allowed';
+    }
+
+    if (Object.keys(errors).length > 0) {
+        return {
+            error: true,
+            errors,
+            data: null,
+        };
+    }
     const accessToken = (await cookies()).get('token')?.value;
-
-
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -219,6 +261,16 @@ export const addProduct = async (
                 body: formData,
             });
             // console.log('addProduct retry /api/products status:', response.status);
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Non-JSON response:', text.slice(0, 200));
+            return {
+                error: true,
+                errors: { general: `Invalid response: ${response.status} ${response.statusText}` },
+                data: null,
+            };
         }
 
         const data = await response.json();
