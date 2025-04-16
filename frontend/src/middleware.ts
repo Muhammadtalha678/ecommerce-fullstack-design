@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchUser } from "./lib/api/fetchUser";
-
+import { jwtVerify } from 'jose'
 export async function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
     const { pathname } = request.nextUrl;
@@ -23,21 +22,20 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
         try {
-            const userData = await fetchUser(token);
 
-            if (!userData) {
-                throw new Error('No user data returned');
-            }
+            const secret = new TextEncoder().encode(process.env.AUTH_SECRET);
+            const { payload } = await jwtVerify(token, secret);
+            console.log(payload);
 
-            // Admin role check
-            if (pathname.startsWith('/admin') && userData.role !== 'admin') {
+            if (!payload || typeof payload !== 'object') throw new Error('Invalid token');
+            if (!payload.role || !payload.id) throw new Error('Invalid token payload');
+
+            if (pathname.startsWith('/admin') && payload.role !== 'admin') {
                 return NextResponse.redirect(new URL('/', request.url));
             }
-
         } catch (error) {
-            console.log("Middleware error:", error);
-
-            // Clear invalid token
+            const err = error as Error
+            console.error('Middleware error:', err.message);
             const response = NextResponse.redirect(new URL('/login', request.url));
             response.cookies.set('token', '', {
                 expires: new Date(0),
