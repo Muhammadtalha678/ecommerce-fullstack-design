@@ -229,54 +229,8 @@ export const addProduct = async (
 
         clearTimeout(timeoutId);
 
-        if (response.status === 401) {
-            const refreshRes = await fetch(ApiRoutes.refreshToken, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (!refreshRes.ok) {
-                const errData = await refreshRes.json();
-                (await cookies()).delete('token');
-                return {
-                    error: true,
-                    errors: errData.errors || { general: 'Session expired' },
-                    data: null,
-                };
-            }
-
-            const refreshData = await refreshRes.json();
-            const newToken = refreshData.data?.accessToken;
-
-            if (!newToken) {
-                (await cookies()).delete('token');
-                return {
-                    error: true,
-                    errors: { general: 'No access token in refresh response' },
-                    data: null,
-                };
-            }
-
-            (await cookies()).set('token', newToken, {
-                expires: 15 / (24 * 60),
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-            });
-
-            response = await fetch(ApiRoutes.addProduct, {
-                signal: controller.signal,
-                headers: {
-                    Authorization: `Bearer ${newToken}`,
-                },
-                method: 'POST',
-                body: formData,
-            });
-        }
-
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            console.error('Non-JSON response:', text.slice(0, 200));
             return {
                 error: true,
                 errors: { general: `Invalid response: ${response.status} ${response.statusText}` },
