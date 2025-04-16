@@ -3,18 +3,20 @@ import { createContext, useContext, useEffect, useState } from "react";
 import Cookie from 'js-cookie'
 import { fetchUser } from "@/lib/api/fetchUser";
 import toast from "react-hot-toast";
+import { ApiRoutes } from "@/constants/constant";
 
 interface User {
     fullname: string,
     email: string,
     role: string,
-    accessToken: string
+    accessToken?: string
 }
 interface AuthContextType {
     user: User | null,
     isAuthenticated: boolean,
-    loginUser: (token: string) => void,
+    loginUser: (user: User) => void,
     loading: boolean
+    sessionExpired: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -22,59 +24,71 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
+    const [sessionExpired, setSessionExpired] = useState<boolean>(false);
     useEffect(() => {
+
         const token = Cookie.get('token');
-        if (token) {
-            setLoading(true)
-            fetchUser(token)
-                .then((userData) => {
-                    if (userData) {
-                        setUser(userData);
-                    }
-                    else {
-                        // console.warn('No user data returned');
-                        Cookie.remove('token');
-                    }
-                })
-                .catch((err) => {
-                    console.error('useEffect fetchUser error:', err.message);
-                    toast.error(err?.message || 'Session expired or invalid token');
-                    Cookie.remove('token');
-                    setUser(null);
-                }).finally(() => {
-                    setLoading(false)
-                }
-                );
-        }
-        else {
+        console.log("Auth context useEffect run when page refresh by f5", user, token);
+        if (token && !user) {
+            getUserInfo(token)
+        } else {
             setLoading(false)
         }
     }, []);
-    const loginUser = async (token: string) => {
-        console.log("token==>>>>>>", token);
-        setLoading(true)
+    const getUserInfo = async (token: string) => {
         try {
-            Cookie.set('token', token, {
-                expires: 15 / (24 * 60), // 15 minutes
+            const resp = await fetch(ApiRoutes.user, {
+                headers: { Authorization: `Bearer ` + token, 'Content-type': "application/json" },
+            })
+            const data = await resp.json()
+            if (!resp.ok) {
+                if (resp.status === 401) {
+                    setSessionExpired(true);
+                    Cookie.remove('token');
+                    throw new Error('Session expired');
+                }
+                throw new Error(data.errors?.general || 'Failed to fetch user data');
+            }
+            if (!data.data) {
+                throw new Error('No user data returned');
+            }
+            // Cookie.set('token', data.accessToken);
+            setUser(data.data)
+        } catch (error) {
+            const err = error as Error;
+            toast.error(err.message || 'Failed to load user data');
+            Cookie.remove('token');
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+
+    }
+    const loginUser = (user: User) => {
+        setLoading(true);
+        try {
+            if (!user.accessToken) {
+                throw new Error('No access token provided');
+            }
+
+            Cookie.set('token', user.accessToken, {
+                expires: 1, // 1 day
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
             });
 
-            const userData = await fetchUser(token);
-            console.log("userData==>>>>>>", userData);
-            if (!userData) {
-                throw new Error('No user data returned');
-            }
-            setUser(userData);
-            toast.success("Login successful");
+            setUser(user);
+            setSessionExpired(false);
         } catch (error) {
-            const err = error as Error
-            toast.error(err?.message || 'Login failed. Please try again.');
+            const err = error as Error;
+            toast.error(err.message || 'Login failed');
             Cookie.remove('token');
             setUser(null);
-        } finally { setLoading(false) }
+        } finally {
+            setLoading(false);
+        }
     };
-    return <AuthContext.Provider value={{ user, isAuthenticated: !!user, loginUser, loading }}>
+    return <AuthContext.Provider value={{ user, isAuthenticated: !!user, loginUser, loading, sessionExpired }}>
         {children}
     </AuthContext.Provider>
 }

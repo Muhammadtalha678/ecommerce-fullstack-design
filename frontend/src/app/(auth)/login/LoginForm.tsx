@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 // import Cookies from 'js-cookie'
 import { useAuth } from '@/context/AuthContext'
 const LoginForm = () => {
-    const { loginUser, loading } = useAuth()
+    const { loginUser, loading, sessionExpired } = useAuth()
     const router = useRouter()
     const [state, loginAction, pending] = useActionState(login, undefined)
     const [formValues, setFormValues] = useState({
@@ -18,6 +18,11 @@ const LoginForm = () => {
         setFormValues({ ...formValues, [name]: value })
     }
     const [isRedirecting, setIsRedirecting] = useState(false)
+    useEffect(() => {
+        if (sessionExpired) {
+            toast.error('Session expired. Please log in again.');
+        }
+    }, [sessionExpired])
     useEffect(() => {
         if (state) {
             if (state.error) {
@@ -41,8 +46,14 @@ const LoginForm = () => {
             else {
                 if (!state.error && state.data?.accessToken) {
                     // Cookies.set('token', state.data?.accessToken)
+
                     setIsRedirecting(true)
-                    loginUser(state.data?.accessToken)
+                    loginUser({
+                        fullname: state.data?.fullname,
+                        email: state.data?.email,
+                        role: state.data?.role,
+                        accessToken: state.data?.accessToken,
+                    })
                 }
 
             }
@@ -52,7 +63,7 @@ const LoginForm = () => {
 
     useEffect(() => {
         if (!loading && isRedirecting) {
-            // toast.success("User Login Successfully")
+            toast.success("User Login Successfully")
             router.push(`/`);
         }
     }, [loading, isRedirecting, router])
