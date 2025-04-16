@@ -1,7 +1,6 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from "react";
 import Cookie from 'js-cookie'
-import { fetchUser } from "@/lib/api/fetchUser";
 import toast from "react-hot-toast";
 import { ApiRoutes } from "@/constants/constant";
 
