@@ -1,29 +1,77 @@
-'use client'
-
-import React from 'react'
-
 import Link from 'next/link'
 import ProductTable from '@/components/Admin/ProductTable'
+import { Product } from '@/interfaces/Product'
+import { ApiRoutes } from '@/constants/constant'
+import { cookies } from 'next/headers'
 
+type FetchProductsResult =
+    | { products: Product[]; errors: null }
+    | { products: null; errors: { [key: string]: string | undefined } }
 
-const AdminProducts = () => {
-    // Dummy data (replace with real data later)
-    const products = [
-        {
-            id: "1",
-            name: 'Nike Air Max',
-            price: "120",
-            image: '/shoes1.jpg',
-            category: "Electronics"
-        },
-        {
-            id: "2",
-            name: 'Adidas UltraBoost',
-            price: "140",
-            image: '/shoes2.jpg',
-            category: "Shoes"
-        },
-    ]
+const fetchProducts = async (): Promise<FetchProductsResult> => {
+    const token = (await cookies()).get('token')?.value
+
+    try {
+        const response = await fetch(ApiRoutes.getProducts, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            // Needed for SSR fetch in Next.js app dir
+            cache: 'no-store',
+        })
+
+        const responseData = await response.json()
+        console.log(responseData)
+
+        if (!response.ok) {
+            return {
+                products: null,
+                errors: {
+                    general: `API request failed with status ${response.status}`,
+                },
+            }
+        }
+
+        const {
+            error,
+            errors,
+            data,
+        }: {
+            error: boolean
+            errors: { [key: string]: string | undefined }
+            data: { message: string; products: Product[] }
+        } = responseData
+
+        if (error) {
+            return { products: null, errors }
+        }
+
+        return { products: data.products, errors: null }
+    } catch (error) {
+        const err = error as Error
+        return { products: null, errors: { general: err.message } }
+    }
+}
+
+const AdminProducts = async () => {
+    const { products, errors } = await fetchProducts()
+
+    if (errors) {
+        return (
+            <div className="flex flex-col items-center justify-center my-6 text-center">
+                <h1 className="text-2xl font-bold text-red-600">Something went wrong!</h1>
+                <p className="text-gray-600">{errors.general}</p>
+            </div>
+        )
+    }
+
+    if (!products || products.length === 0) {
+        return (
+            <h1 className="md:text-3xl text-2xl text-black font-extrabold mb-5 text-center my-5">
+                No Product Found
+            </h1>
+        )
+    }
 
     return (
         <div className="bg-white p-6 rounded-xl shadow">
@@ -41,13 +89,7 @@ const AdminProducts = () => {
                 <ProductTable products={products} />
             </div>
 
-            {/* Pagination */}
-            {/* <div className="mt-6 flex justify-center space-x-2">
-                <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Prev</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">1</button>
-                <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">2</button>
-                <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Next</button>
-            </div> */}
+            {/* Pagination - Add later if needed */}
         </div>
     )
 }

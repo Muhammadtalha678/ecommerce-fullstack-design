@@ -2,13 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
-interface Product {
-    id: string,
-    name: string,
-    price: string,
-    image: string,
-    category: string
-}
+import { Product } from '@/interfaces/Product'
+
 
 const ProductTable = ({ products }: { products: Product[] }) => {
     return (
@@ -23,12 +18,12 @@ const ProductTable = ({ products }: { products: Product[] }) => {
                 </tr>
             </thead>
             <tbody>
-                {products.map((product) => (
-                    <tr key={product.id} className="border-b hover:bg-gray-50">
+                {products.map((product, ind) => (
+                    <tr key={ind} className="border-b hover:bg-gray-50">
                         <td className="p-3">
                             <Image
-                                src={product.image}
-                                alt={product.name}
+                                src={product.bannerImage!}
+                                alt={product.name!}
                                 width={60}
                                 height={60}
                                 className="rounded"
@@ -38,7 +33,7 @@ const ProductTable = ({ products }: { products: Product[] }) => {
                         <td className="p-3">${product.price}</td>
                         <td className="p-3">{product.category}</td>
                         <td className="p-3 flex items-center gap-4">
-                            <Link href={`/admin/products/edit/${product.id}`}>
+                            <Link href={`/admin/products/edit/${product._id}`}>
                                 <FiEdit className="text-blue-600 hover:text-blue-800 cursor-pointer" />
                             </Link>
                             <button>
