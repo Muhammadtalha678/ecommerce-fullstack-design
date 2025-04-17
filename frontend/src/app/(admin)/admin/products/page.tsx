@@ -1,21 +1,17 @@
 import Link from 'next/link'
 import ProductTable from '@/components/Admin/ProductTable'
-import { Product } from '@/interfaces/Product'
+import { FetchProductsResult } from '@/interfaces/Product'
 import { ApiRoutes } from '@/constants/constant'
 import { cookies } from 'next/headers'
+import { ApiResponse } from '@/interfaces/Auth'
 
-type FetchProductsResult =
-    | { products: Product[]; errors: null }
-    | { products: null; errors: { [key: string]: string | undefined } }
 
 const fetchProducts = async (): Promise<FetchProductsResult> => {
     const token = (await cookies()).get('token')?.value
 
     try {
         const response = await fetch(ApiRoutes.getProducts, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+
             // Needed for SSR fetch in Next.js app dir
             cache: 'no-store',
         })
@@ -27,26 +23,20 @@ const fetchProducts = async (): Promise<FetchProductsResult> => {
             return {
                 products: null,
                 errors: {
-                    general: `API request failed with status ${response.status}`,
+                    general: responseData.errors.general,
                 },
             }
         }
 
         const {
-            error,
-            errors,
-            data,
-        }: {
-            error: boolean
-            errors: { [key: string]: string | undefined }
-            data: { message: string; products: Product[] }
-        } = responseData
+            error, errors, data
+        }: ApiResponse = responseData
 
         if (error) {
-            return { products: null, errors }
+            return { products: null, errors: { general: errors.general } }
         }
 
-        return { products: data.products, errors: null }
+        return { products: data?.products, errors: null }
     } catch (error) {
         const err = error as Error
         return { products: null, errors: { general: err.message } }
@@ -55,6 +45,7 @@ const fetchProducts = async (): Promise<FetchProductsResult> => {
 
 const AdminProducts = async () => {
     const { products, errors } = await fetchProducts()
+    console.log(products);
 
     if (errors) {
         return (
