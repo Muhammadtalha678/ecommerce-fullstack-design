@@ -65,4 +65,23 @@ const getProductController = async (req, res) => {
     return sendResponse(res, 500, true, { general: error.message }, null);
   }
 }
-export { addProductController,getProductController };
+
+const singleProductController = async(req,res) => {
+  try {
+    const { prodId } = req.params
+    if (!prodId) {
+      return sendResponse(res, 404, true, { general: "Product Id not provided" }, null);
+    }
+    const foundProduct = await ProductModal.findById(prodId)
+    console.log(prodId);
+    
+    if (!foundProduct) {
+      return sendResponse(res, 404, true, { general: "No prouct found" }, null);
+    }
+    return sendResponse(res, 200,false,{}, {...foundProduct._doc,message:"ProductFound Successfully"});
+  } catch (error) {
+    return sendResponse(res, 500, true, { general: error.message }, null);
+    
+  }
+}
+export { addProductController,getProductController,singleProductController };
