@@ -13,7 +13,7 @@ const multipleUpload = upload.fields([
 ]);
 
 routers.post('/addProduct',authenticateUser,authorizeAdmin,multipleUpload,addProductController);
-routers.get('/allProducts',authenticateUser,authorizeAdmin,getProductController)
+routers.get('/allProducts',getProductController)
 routers.get('/singleProduct/:prodId',singleProductController)
 // routers.get('/editProduct/:editId',authenticateUser,authorizeAdmin,editProductController)
 
