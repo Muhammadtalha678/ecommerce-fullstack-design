@@ -87,9 +87,9 @@ const ProductForm = ({
                 }
             });
         }
-
+        // 
         if (bannerFile) formData.append('bannerImage', bannerFile);
-        detailFiles.forEach((file, index) => {
+        detailFiles.forEach((file) => {
             formData.append(`detailImages`, file);
         });
 
