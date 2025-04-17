@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { ApiResponse } from '@/interfaces/Auth';
 import { Product } from '@/interfaces/Product';
@@ -15,16 +15,16 @@ interface FormValues {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
+// Utility function to validate file type
 function validateImageFile(file: File): string | null {
     if (!file.type.startsWith('image/')) {
         return `File "${file.name}" is not a valid image.`;
     }
     return null;
 }
-
 function validateFileSize(file: File): string | null {
     if (file.size > MAX_FILE_SIZE) {
-        return `File "${file.name}" is too large. Max allowed size is 5MB.`;
+        return `File "${file.name}" is too large. Max allowed size is 10MB.`;
     }
     return null;
 }
@@ -36,99 +36,112 @@ const ProductForm = ({
     isEdit = false,
     FormValues,
     onchange,
-    product,
+    product
 }: {
     action?: (formData: FormData) => void;
     state?: ApiResponse;
-    pending?: boolean;
+    pending?: boolean | undefined;
     isEdit?: boolean;
     FormValues?: FormValues;
     onchange?: (e: ChangeEvent<HTMLInputElement>) => void;
-    product?: Product;
+    product?: Product
 }) => {
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [bannerFileError, setBannerFileError] = useState<string | null>(null);
     const [detailPreviews, setDetailPreviews] = useState<string[]>([]);
     const [detailError, setDetailError] = useState<string | null>(null);
-    const [bannerFile, setBannerFile] = useState<File | null>(null);
-    const [detailFiles, setDetailFiles] = useState<File[]>([]);
 
     useEffect(() => {
-        if (isEdit && product?.bannerImage && !bannerPreview) {
-            setBannerPreview(product.bannerImage);
-        }
-        if (isEdit && product?.detailImages && detailPreviews.length === 0) {
-            setDetailPreviews(product.detailImages);
-        }
-
         return () => {
             if (bannerPreview) URL.revokeObjectURL(bannerPreview);
             detailPreviews.forEach((url) => URL.revokeObjectURL(url));
         };
-    }, [bannerPreview, detailPreviews, isEdit, product]);
-
-    const handleSubmit = async (formData: FormData) => {
-        if (isEdit && product) {
-            if (!bannerFile && product.bannerImage) {
-                formData.append('existingBannerImage', product.bannerImage);
-            }
-
-            if (detailFiles.length === 0 && product.detailImages) {
-                product.detailImages.forEach((url, index) => {
-                    formData.append(`existingDetailImages[${index}]`, url);
-                });
-            }
-
-            const fields: (keyof FormValues)[] = ['name', 'price', 'description', 'category', 'stock'];
-            fields.forEach((field) => {
-                const value = FormValues?.[field];
-                if (value && value !== String(product[field])) {
-                    formData.append(field, value);
-                }
-            });
-        }
-        // 
-        if (bannerFile) formData.append('bannerImage', bannerFile);
-        detailFiles.forEach((file) => {
-            formData.append(`detailImages`, file);
-        });
-
-        if (action) {
-            action(formData);
-        }
-    };
+    }, [bannerPreview, detailPreviews]);
 
     return (
-        <form action={handleSubmit} className="space-y-4" encType="multipart/form-data">
-            {/* Input fields */}
-            {['name', 'description', 'price', 'category', 'stock'].map((field) => (
-                <div key={field}>
-                    <label className="block mb-1 font-medium">
-                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </label>
-                    <input
-                        type="text"
-                        name={field}
-                        value={
-                            FormValues?.[field as keyof FormValues] ??
-                            (isEdit ? product?.[field as keyof Product] : '') ??
-                            ''
-                        }
-                        onChange={onchange} // ✅ This MUST be defined
-                        required={!isEdit}
-                        className="w-full border rounded px-3 py-2"
-                    />
-                    {state?.error && state.errors[field] && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {state.errors[field]}
-                        </p>
-                    )}
-                </div>
-            ))}
-
-
-
-            {/* Banner Image */}
+        <form action={action} className="space-y-4" encType="multipart/form-data">
+            {/* ... your input fields for name, description, etc ... */}
+            <div>
+                <label className="block mb-1 font-medium">Product Name</label>
+                <input
+                    type="text"
+                    name="name"
+                    value={FormValues?.name}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.name && state.errors.name
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Description</label>
+                <input
+                    type="text"
+                    name="description"
+                    value={FormValues?.description}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.description && state.errors.description
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Price</label>
+                <input
+                    type="text"
+                    name="price"
+                    value={FormValues?.price}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.price && state.errors.price
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Category</label>
+                <input
+                    type="text"
+                    name="category"
+                    value={FormValues?.category}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.category && state.errors.category
+                    }
+                </p>
+            </div>
+            <div>
+                <label className="block mb-1 font-medium">Stock</label>
+                <input
+                    type="text"
+                    name="stock"
+                    value={FormValues?.stock}
+                    onChange={onchange}
+                    // required
+                    className="w-full border rounded px-3 py-2"
+                />
+                <p className=" text-red-500 text-sm mt-6">
+                    {
+                        state?.error && state.errors.stock && state.errors.stock
+                    }
+                </p>
+            </div>
+            {/* BANNER IMAGE */}
             <div>
                 <label className="block mb-1 font-medium">Banner Image</label>
                 <input
@@ -144,7 +157,6 @@ const ProductForm = ({
                             toast.error(typeError);
                             setBannerFileError(typeError);
                             setBannerPreview(null);
-                            setBannerFile(null);
                             e.target.value = '';
                             return;
                         }
@@ -154,32 +166,34 @@ const ProductForm = ({
                             toast.error(sizeError);
                             setBannerFileError(sizeError);
                             setBannerPreview(null);
-                            setBannerFile(null);
                             e.target.value = '';
                             return;
                         }
 
                         setBannerFileError(null);
-                        setBannerFile(file);
                         setBannerPreview(URL.createObjectURL(file));
                     }}
                     className="w-full border rounded px-3 py-2"
-                    required={!isEdit && !product?.bannerImage}
                 />
                 <p className="text-red-500 text-sm mt-2">
-                    {bannerFileError || (state?.error && state.errors.bannerImage)}
+                    {bannerFileError ||
+                        (state?.error && state.errors.bannerImage && state.errors.bannerImage)}
                 </p>
                 {bannerPreview && (
                     <div className="mt-2">
-                        <p className="text-sm">Preview:</p>
-                        <img src={bannerPreview} alt="Banner preview" className="max-w-xs rounded" />
+                        <p className="text-sm">Selected:</p>
+                        <img
+                            src={bannerPreview}
+                            alt="Banner preview"
+                            className="max-w-xs rounded"
+                        />
                     </div>
                 )}
             </div>
 
-            {/* Detail Images */}
+            {/* DETAIL IMAGES */}
             <div>
-                <label className="block mb-1 font-medium">Detail Images (4 required)</label>
+                <label className="block mb-1 font-medium">Detail Images (4 max)</label>
                 <input
                     type="file"
                     name="detailImages"
@@ -187,13 +201,12 @@ const ProductForm = ({
                     multiple
                     onChange={(e) => {
                         const files = Array.from(e.target.files || []);
+
                         if (files.length !== 4) {
                             const msg = 'Please select exactly 4 images.';
                             toast.error(msg);
                             setDetailError(msg);
                             setDetailPreviews([]);
-                            setDetailFiles([]);
-                            e.target.value = '';
                             return;
                         }
 
@@ -202,8 +215,6 @@ const ProductForm = ({
                             if (typeError) {
                                 toast.error(typeError);
                                 setDetailError(typeError);
-                                setDetailPreviews([]);
-                                setDetailFiles([]);
                                 e.target.value = '';
                                 return;
                             }
@@ -212,8 +223,6 @@ const ProductForm = ({
                             if (sizeError) {
                                 toast.error(sizeError);
                                 setDetailError(sizeError);
-                                setDetailPreviews([]);
-                                setDetailFiles([]);
                                 e.target.value = '';
                                 return;
                             }
@@ -221,14 +230,13 @@ const ProductForm = ({
 
                         const previews = files.map((file) => URL.createObjectURL(file));
                         setDetailPreviews(previews);
-                        setDetailFiles(files);
                         setDetailError(null);
                     }}
                     className="w-full border rounded px-3 py-2"
-                    required={!isEdit && !product?.detailImages}
                 />
                 <p className="text-red-500 text-sm mt-2">
-                    {detailError || (state?.error && state.errors.detailImages)}
+                    {detailError ||
+                        (state?.error && state.errors.detailImages && state.errors.detailImages)}
                 </p>
                 {detailPreviews.length > 0 && (
                     <div className="mt-2">
@@ -246,6 +254,7 @@ const ProductForm = ({
                     </div>
                 )}
             </div>
+
 
             <button
                 type="submit"
