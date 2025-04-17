@@ -2,7 +2,6 @@ import Link from 'next/link'
 import ProductTable from '@/components/Admin/ProductTable'
 import { FetchProductsResult } from '@/interfaces/Product'
 import { ApiRoutes } from '@/constants/constant'
-import { cookies } from 'next/headers'
 import { ApiResponse } from '@/interfaces/Auth'
 
 
