@@ -78,7 +78,7 @@ const singleProductController = async(req,res) => {
     if (!foundProduct) {
       return sendResponse(res, 404, true, { general: "No prouct found" }, null);
     }
-    return sendResponse(res, 200,false,{}, {...foundProduct._doc,message:"ProductFound Successfully"});
+    return sendResponse(res, 200,false,{}, {foundProduct,message:"ProductFound Successfully"});
   } catch (error) {
     return sendResponse(res, 500, true, { general: error.message }, null);
     
