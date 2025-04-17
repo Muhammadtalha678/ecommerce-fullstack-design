@@ -49,10 +49,10 @@ const LoginForm = () => {
 
                     setIsRedirecting(true)
                     loginUser({
-                        fullname: state.data?.fullname,
-                        email: state.data?.email,
-                        role: state.data?.role,
-                        accessToken: state.data?.accessToken,
+                        fullname: state.data?.fullname as string,
+                        email: state.data?.email as string,
+                        role: state.data?.role as string,
+                        accessToken: state.data?.accessToken as string,
                     })
                 }
 
