@@ -7,8 +7,6 @@ import { ApiResponse } from '@/interfaces/Auth'
 
 
 const fetchProducts = async (): Promise<FetchProductsResult> => {
-    const token = (await cookies()).get('token')?.value
-
     try {
         const response = await fetch(ApiRoutes.getProducts, {
 
