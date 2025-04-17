@@ -2,7 +2,7 @@
 import { sendResponse } from '../helpers/sendResponse.js';
 import ProductModal from '../modals/product.modal.js';
 import cloudinary from '../lib/configs/cloudinary.config.js';
-
+import mongoose from 'mongoose'
 const addProductController = async (req, res) => {
   try {
     const files = req.files;
@@ -69,8 +69,8 @@ const getProductController = async (req, res) => {
 const singleProductController = async(req,res) => {
   try {
     const { prodId } = req.params
-    if (!prodId) {
-      return sendResponse(res, 404, true, { general: "Product Id not provided" }, null);
+    if (!prodId || !mongoose.Types.ObjectId.isValid(prodId)) {
+      return sendResponse(res, 400, true, { general: "Invalid Product ID" }, null);
     }
     const foundProduct = await ProductModal.findById(prodId)
     console.log(prodId);
