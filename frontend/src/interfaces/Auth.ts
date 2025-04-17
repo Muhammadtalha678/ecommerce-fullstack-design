@@ -1,3 +1,5 @@
+import { Product } from "./Product";
+
 export interface ApiResponse {
     error: boolean,
     errors: {
@@ -7,5 +9,5 @@ export interface ApiResponse {
         confirmPassword?: string,
         [key: string]: string | undefined; // for any extra fields
     },
-    data: { [key: string]: string; } | null
+    data: { [key: string]: any; products?: Product[] } | null
 } 
