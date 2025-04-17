@@ -1,6 +1,6 @@
 import { ApiRoutes } from '@/constants/constant';
 import { ApiResponse } from '@/interfaces/Auth';
-import { FetchProductsResult } from '@/interfaces/Product';
+import { FetchProductsResult, Product } from '@/interfaces/Product';
 import React from 'react'
 import EditProductComp from './EditProduct';
 const fetchSingleProduct = async (id: string): Promise<FetchProductsResult> => {
@@ -23,7 +23,7 @@ const fetchSingleProduct = async (id: string): Promise<FetchProductsResult> => {
             return { product: null, errors: { general: errors.general } }
         }
 
-        return { product: data?.foundProduct, errors: null }
+        return { product: data?.foundProduct as Product, errors: null }
     } catch (error) {
         const err = error as Error
         return { product: null, errors: { general: err.message } }

@@ -40,7 +40,7 @@ const AddProduct = () => {
                 }
             }
         } else if (state && !state.error) {
-            toast.success(state?.data?.message || "Product added successfully");
+            toast.success(state?.data?.message as string || "Product added successfully");
             router.push('/admin/products');
         }
     }, [state]);

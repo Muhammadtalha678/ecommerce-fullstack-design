@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import ProductTable from '@/components/Admin/ProductTable'
-import { FetchProductsResult } from '@/interfaces/Product'
+import { FetchProductsResult, Product } from '@/interfaces/Product'
 import { ApiRoutes } from '@/constants/constant'
 import { ApiResponse } from '@/interfaces/Auth'
 
@@ -33,7 +33,7 @@ const fetchProducts = async (): Promise<FetchProductsResult> => {
             return { products: null, errors: { general: errors.general } }
         }
 
-        return { products: data?.products, errors: null }
+        return { products: data?.products as Product[], errors: null }
     } catch (error) {
         const err = error as Error
         return { products: null, errors: { general: err.message } }

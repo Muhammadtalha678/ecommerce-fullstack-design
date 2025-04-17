@@ -21,13 +21,13 @@ const RegisterForm = () => {
                 toast.error(state.errors.general)
             } else {
                 if (!state.error) {
-                    toast.success(state.data?.message || "Registration Successfull!")
+                    toast.success(state.data?.message as string || "Registration Successfull!")
                     const email = state.data?.email;
                     const otpExpiresAt = state.data?.otpExpiresAt;
                     if (email && otpExpiresAt) {
                         localStorage.setItem("verifyEmail", JSON.stringify({
                             email: email,
-                            expiry: new Date(otpExpiresAt).getTime()
+                            expiry: new Date(otpExpiresAt as Date).getTime()
                         }));
                         setIsRedirecting(true)
                         setTimeout(() => {

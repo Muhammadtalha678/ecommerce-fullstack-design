@@ -9,5 +9,5 @@ export interface ApiResponse {
         confirmPassword?: string,
         [key: string]: string | undefined; // for any extra fields
     },
-    data: { [key: string]: string | Product[] | Product } | null
+    data: { [key: string]: string | Product[] | Product | Date } | null
 } 

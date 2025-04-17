@@ -17,7 +17,7 @@ const VerfiyEmailForm = () => {
             if (state.errors?.general) {
                 toast.error(state.errors.general)
             } else if (!state.error) {
-                toast.success(state.data?.message || "Verification Successful!")
+                toast.success(state.data?.message as string || "Verification Successful!")
                 setIsRedirecting(true)
                 setTimeout(() => {
                     router.push('/login')
