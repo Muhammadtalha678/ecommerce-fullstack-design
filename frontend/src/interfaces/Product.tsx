@@ -16,3 +16,10 @@ export interface Product {
     stock?: string
 }
 
+export interface FetchProductsResult {
+    error?: boolean,
+    errors?: { general?: string } | null;
+    products?: Product[] | null;
+    product?: Product | null;
+
+}
