@@ -79,7 +79,7 @@ const singleProductController = async(req,res) => {
     if (!foundProduct) {
       return sendResponse(res, 404, true, { general: "No prouct found" }, null);
     }
-    return sendResponse(res, 200,false,{}, {foundProduct,message:"ProductFound Successfully"});
+    return sendResponse(res, 200,false,{}, {foundProduct,message:"Product Found Successfully"});
   } catch (error) {
     return sendResponse(res, 500, true, { general: error.message }, null);
     
@@ -87,6 +87,8 @@ const singleProductController = async(req,res) => {
 }
 const editProductController = async(req,res) => {
   try {
+    console.log(req.files);
+    
     const { editId } = req.params
     if (!editId || !mongoose.Types.ObjectId.isValid(editId)) {
       return sendResponse(res, 400, true, { general: "Invalid Product ID" }, null);
@@ -101,46 +103,74 @@ const editProductController = async(req,res) => {
     
     let bannerImageUrl = foundProduct.bannerImage
     let detailImageUrls = foundProduct.detailImages
-    // If new bannerImage is uploaded
-    if (files?.bannerImage?.length) {
-      const oldbannerImageId = extractPublicId(bannerImageUrl)
-      // delete Old banner Images
-      await cloudinary.uploader.destroy(oldbannerImageId)
+    // Centralized image logic
+if (files?.bannerImage?.length && files?.detailImages?.length) {
+  // Delete old images first
+  await cloudinary.uploader.destroy(extractPublicId(bannerImageUrl));
+  await Promise.all(
+    detailImageUrls.map((url) => cloudinary.uploader.destroy(extractPublicId(url)))
+  );
 
-      const bannerImageFile = files.bannerImage[0];
-      const bannerUpload = await cloudinary.uploader.upload(
-        bannerImageFile.path,
-        { folder: 'ecommerce-internship' }
-      );
-      bannerImageUrl = bannerUpload.secure_url;
-    }
+  // Upload new banner
+  const bannerImageFile = files.bannerImage[0];
+  const bannerUpload = await cloudinary.uploader.upload(
+    bannerImageFile.path,
+    { folder: 'ecommerce-internship' }
+  );
+  bannerImageUrl = bannerUpload.secure_url;
+
+  // Upload new detail images
+  const detailImagesFiles = files.detailImages;
+  if (detailImagesFiles.length !== 4) {
+    return sendResponse(res, 400, true, {
+      detailImages: 'Exactly 4 detail images required if updating',
+    }, null);
+  }
+  const detailUploads = await Promise.all(
+    detailImagesFiles.map((img) =>
+      cloudinary.uploader.upload(img.path, { folder: 'ecommerce-internship' })
+    )
+  );
+  detailImageUrls = detailUploads.map((upload) => upload.secure_url);
+}
+
+// Or separately handle each
+else if (files?.bannerImage?.length) {
+  await cloudinary.uploader.destroy(extractPublicId(bannerImageUrl));
+  const bannerImageFile = files.bannerImage[0];
+  const bannerUpload = await cloudinary.uploader.upload(
+    bannerImageFile.path,
+    { folder: 'ecommerce-internship' }
+  );
+  bannerImageUrl = bannerUpload.secure_url;
+}
+
+else if (files?.detailImages?.length) {
+  if (files.detailImages.length !== 4) {
+    return sendResponse(res, 400, true, {
+      detailImages: 'Exactly 4 detail images required if updating',
+    }, null);
+  }
+  await Promise.all(
+    detailImageUrls.map((url) => cloudinary.uploader.destroy(extractPublicId(url)))
+  );
+  const detailUploads = await Promise.all(
+    files.detailImages.map((img) =>
+      cloudinary.uploader.upload(img.path, { folder: 'ecommerce-internship' })
+    )
+  );
+  detailImageUrls = detailUploads.map((upload) => upload.secure_url);
+}
+
     
-    if (files?.detailImages?.length) {
-      if (files.detailImages.length !== 4) {
-        return sendResponse(res, 400, true, {
-          detailImages: 'Exactly 4 detail images required if updating',
-        }, null);
-      }
-      const oldbannerImageIds = detailImageUrls.map((url) => extractPublicId(url))
-      await cloudinary.api.delete_all_resources(oldbannerImageIds)
-
-      const detailImagesFiles = files.detailImages;
-
-      const detailUploadPromises = detailImagesFiles.map((image) =>
-        cloudinary.uploader.upload(image.path, { folder: 'ecommerce-internship' })
-      );
-      const detailUploads = await Promise.all(detailUploadPromises);
-      detailImageUrls = detailUploads.map((upload) => upload.secure_url);
-    }
-    
-    foundProduct.updateOne({
+    await foundProduct.updateOne({
         name,
         price: parseFloat(price),
         description,
         category,
         stock: parseInt(stock),
         bannerImage: bannerImageUrl,
-        etailImages: detailImageUrls,
+        detailImages: detailImageUrls,
     })
     
     // console.log(prodId);
@@ -153,8 +183,38 @@ const editProductController = async(req,res) => {
 }
 
 const deleteProductController = async (req, res) => {
-  const { deleteId } = req.params
-  
+  try {
+    const { deleteId } = req.params
+  if (!deleteId || !mongoose.Types.ObjectId.isValid(deleteId)) {
+      return sendResponse(res, 400, true, { general: "Invalid Product ID" }, null);
+    }
+    
+    const findProduct = await ProductModal.findById(deleteId)
+    
+    if (!findProduct) {
+      return sendResponse(res, 404, true, { general: "No prouct found" }, null);
+    }
+    
+    const bannerImageUrl = findProduct.bannerImage
+  const detailImageUrls = findProduct.detailImages
+
+    if (bannerImageUrl && detailImageUrls.length) {
+         // delete Old banner Images
+     await cloudinary.uploader.destroy(extractPublicId(bannerImageUrl))
+     await Promise.all(
+       detailImageUrls.map((url) => cloudinary.uploader.destroy(extractPublicId(url)))
+     )
+      
+    }
+
+    await findProduct.deleteOne()
+    return sendResponse(res, 200, true, {}, {message:"Product delete successfully"});
+    
+  } catch (error) {
+    return sendResponse(res, 404, true, { general: "No prouct found" }, null);
+    
+  }
+
 }
 
 export { addProductController,getProductController,singleProductController,editProductController,deleteProductController };
