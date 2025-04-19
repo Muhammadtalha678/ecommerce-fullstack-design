@@ -12,6 +12,7 @@ export const ApiRoutes = {
     addProduct: `${BASE_URL}/api/product/addProduct`,
     getProducts: `${BASE_URL}/api/product/allProducts`,
     singleProduct: `${BASE_URL}/api/product/singleProduct`,
-    editProduct: `${BASE_URL}/api/product/editProduct`
+    editProduct: `${BASE_URL}/api/product/editProduct`,
+    deleteProduct: `${BASE_URL}/api/product/deleteProduct`
 }
 

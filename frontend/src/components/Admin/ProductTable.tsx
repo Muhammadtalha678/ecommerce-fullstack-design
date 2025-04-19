@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
 import { Product } from '@/interfaces/Product'
+import DeleteProduct from './DeleteProduct'
 
 
 const ProductTable = ({ products }: { products: Product[] }) => {
@@ -36,9 +37,7 @@ const ProductTable = ({ products }: { products: Product[] }) => {
                             <Link href={`/admin/products/edit/${product._id}`}>
                                 <FiEdit className="text-blue-600 hover:text-blue-800 cursor-pointer" />
                             </Link>
-                            <button>
-                                <FiTrash2 className="text-red-600 hover:text-red-800 cursor-pointer" />
-                            </button>
+                            <DeleteProduct id={product._id!.toString()} />
                         </td>
                     </tr>
                 ))}

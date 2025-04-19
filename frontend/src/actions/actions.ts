@@ -398,3 +398,77 @@ export const editProduct = async (
         };
     }
 };
+
+
+export const deleteProduct = async (
+    state: ApiResponse | undefined,
+    formData: FormData
+): Promise<ApiResponse> => {
+    const id = formData.get('id') as string
+    const errors: { [key: string]: string | undefined } = {};
+
+    if (!id) errors.id = 'Product id is required';
+
+    if (Object.keys(errors).length > 0) {
+        return {
+            error: true,
+            errors,
+            data: null,
+        };
+    }
+
+    const accessToken = (await cookies()).get('token')?.value;
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+        const response = await fetch(`${ApiRoutes.deleteProduct}/${id}`, {
+            signal: controller.signal,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            method: 'POST',
+            body: formData,
+        });
+
+        clearTimeout(timeoutId);
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return {
+                error: true,
+                errors: { general: `Invalid response: ${response.status} ${response.statusText}` },
+                data: null,
+            };
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                error: true,
+                errors: data.errors || { general: 'Failed to delete product' },
+                data: null,
+            };
+        }
+
+        return {
+            error: false,
+            errors: {},
+            data: data.data,
+        };
+    } catch (error) {
+        const err = error as Error;
+        const timeout = err.name === 'AbortError';
+
+        return {
+            error: true,
+            errors: {
+                general: timeout ? 'Request timed out' : err.message || 'An error occurred',
+            },
+            data: null,
+        };
+    }
+};
+
