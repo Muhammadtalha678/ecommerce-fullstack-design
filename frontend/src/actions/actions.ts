@@ -401,7 +401,6 @@ export const editProduct = async (
 
 
 export const deleteProduct = async (
-    state: ApiResponse | undefined,
     formData: FormData
 ): Promise<ApiResponse> => {
     const id = formData.get('id') as string
@@ -456,7 +455,7 @@ export const deleteProduct = async (
         return {
             error: false,
             errors: {},
-            data: data?.data,
+            data: { data: "nksndksd" },
         };
     } catch (error) {
         const err = error as Error;
