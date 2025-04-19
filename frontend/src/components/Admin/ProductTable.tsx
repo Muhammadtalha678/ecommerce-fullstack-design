@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FiEdit, FiTrash2 } from 'react-icons/fi'
+import { FiEdit } from 'react-icons/fi'
 import { Product } from '@/interfaces/Product'
 import DeleteProduct from './DeleteProduct'
 
