@@ -1,5 +1,5 @@
 'use client'
-import React, { useActionState, useEffect, useTransition } from 'react'
+import React, { useTransition } from 'react'
 import { FiTrash2 } from 'react-icons/fi'
 import { deleteProduct } from '@/actions/actions'
 import toast from 'react-hot-toast'
