@@ -456,7 +456,7 @@ export const deleteProduct = async (
         return {
             error: false,
             errors: {},
-            data: data.data,
+            data: data?.data,
         };
     } catch (error) {
         const err = error as Error;
