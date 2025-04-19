@@ -11,4 +11,4 @@ const CategorySchema = new Schema({
 
 const CategoryModal = mongoose.model('categories', CategorySchema)
 
-export default {CategoryModal}
+export default CategoryModal
