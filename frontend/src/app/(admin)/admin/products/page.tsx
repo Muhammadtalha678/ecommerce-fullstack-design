@@ -55,9 +55,18 @@ const AdminProducts = async () => {
 
     if (!products || products.length === 0) {
         return (
-            <h1 className="md:text-3xl text-2xl text-black font-extrabold mb-5 text-center my-5">
-                No Product Found
-            </h1>
+            <div className="flex flex-col justify-between items-center mb-6">
+                <h1 className="md:text-3xl text-2xl text-black font-extrabold mb-5 text-center my-5">
+                    No Product Found
+                </h1>
+                <Link
+                    href="/admin/products/add"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    Add Product
+                </Link>
+            </div>
+
         )
     }
 

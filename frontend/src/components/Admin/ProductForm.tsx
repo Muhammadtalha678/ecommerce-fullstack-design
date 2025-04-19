@@ -50,17 +50,26 @@ const ProductForm = ({
     const [bannerFileError, setBannerFileError] = useState<string | null>(null);
     const [detailPreviews, setDetailPreviews] = useState<string[]>([]);
     const [detailError, setDetailError] = useState<string | null>(null);
+    const [existingBannerUrl, setExistingBannerUrl] = useState<string | null>(null);
+    const [existingDetailUrls, setExistingDetailUrls] = useState<string[]>([]);
 
     useEffect(() => {
+        if (isEdit && product) {
+            setExistingBannerUrl(product.bannerImage || null);
+            setExistingDetailUrls(product.detailImages || []);
+        }
+
         return () => {
             if (bannerPreview) URL.revokeObjectURL(bannerPreview);
             detailPreviews.forEach((url) => URL.revokeObjectURL(url));
         };
-    }, [bannerPreview, detailPreviews]);
-
+    }, [isEdit, product, bannerPreview, detailPreviews]);
     return (
         <form action={action} className="space-y-4" encType="multipart/form-data">
             {/* ... your input fields for name, description, etc ... */}
+            {isEdit &&
+                <input type="hidden" value={product?._id} name='id' />
+            }
             <div>
                 <label className="block mb-1 font-medium">Product Name</label>
                 <input
@@ -153,18 +162,12 @@ const ProductForm = ({
                         if (!file) return;
 
                         const typeError = validateImageFile(file);
-                        if (typeError) {
-                            toast.error(typeError);
-                            setBannerFileError(typeError);
-                            setBannerPreview(null);
-                            e.target.value = '';
-                            return;
-                        }
-
                         const sizeError = validateFileSize(file);
-                        if (sizeError) {
-                            toast.error(sizeError);
-                            setBannerFileError(sizeError);
+
+                        if (typeError || sizeError) {
+                            const err = typeError || sizeError;
+                            toast.error(err!);
+                            setBannerFileError(err);
                             setBannerPreview(null);
                             e.target.value = '';
                             return;
@@ -175,15 +178,18 @@ const ProductForm = ({
                     }}
                     className="w-full border rounded px-3 py-2"
                 />
+                {isEdit && !bannerPreview && existingBannerUrl && (
+                    <input type="hidden" name="existingBannerImage" value={existingBannerUrl} />
+                )}
                 <p className="text-red-500 text-sm mt-2">
                     {bannerFileError ||
-                        (state?.error && state.errors.bannerImage && state.errors.bannerImage)}
+                        (state?.error && state.errors.bannerImage)}
                 </p>
-                {bannerPreview && (
+                {(bannerPreview || existingBannerUrl) && (
                     <div className="mt-2">
                         <p className="text-sm">Selected:</p>
                         <img
-                            src={bannerPreview}
+                            src={bannerPreview || existingBannerUrl!}
                             alt="Banner preview"
                             className="max-w-xs rounded"
                         />
@@ -191,7 +197,7 @@ const ProductForm = ({
                 )}
             </div>
 
-            {/* DETAIL IMAGES */}
+            {/* Detail Images */}
             <div>
                 <label className="block mb-1 font-medium">Detail Images (4 max)</label>
                 <input
@@ -212,17 +218,12 @@ const ProductForm = ({
 
                         for (const file of files) {
                             const typeError = validateImageFile(file);
-                            if (typeError) {
-                                toast.error(typeError);
-                                setDetailError(typeError);
-                                e.target.value = '';
-                                return;
-                            }
-
                             const sizeError = validateFileSize(file);
-                            if (sizeError) {
-                                toast.error(sizeError);
-                                setDetailError(sizeError);
+
+                            if (typeError || sizeError) {
+                                const err = typeError || sizeError;
+                                toast.error(err!);
+                                setDetailError(err);
                                 e.target.value = '';
                                 return;
                             }
@@ -234,20 +235,23 @@ const ProductForm = ({
                     }}
                     className="w-full border rounded px-3 py-2"
                 />
+                {isEdit && detailPreviews.length === 0 && existingDetailUrls.length === 4 && (
+                    <input type="hidden" name="existingDetailImages" value={JSON.stringify(existingDetailUrls)} />
+                )}
                 <p className="text-red-500 text-sm mt-2">
                     {detailError ||
-                        (state?.error && state.errors.detailImages && state.errors.detailImages)}
+                        (state?.error && state.errors.detailImages)}
                 </p>
-                {detailPreviews.length > 0 && (
+                {(detailPreviews.length > 0 || existingDetailUrls.length > 0) && (
                     <div className="mt-2">
                         <p className="text-sm">Selected:</p>
                         <div className="flex flex-wrap gap-2">
-                            {detailPreviews.map((url, index) => (
+                            {(detailPreviews.length > 0 ? detailPreviews : existingDetailUrls).map((url, i) => (
                                 <img
-                                    key={index}
+                                    key={i}
                                     src={url}
-                                    alt={`Detail preview ${index + 1}`}
                                     className="max-w-[100px] rounded"
+                                    alt={`Detail ${i + 1}`}
                                 />
                             ))}
                         </div>
@@ -256,12 +260,13 @@ const ProductForm = ({
             </div>
 
 
+
             <button
                 type="submit"
                 className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
                 disabled={pending}
             >
-                {isEdit ? 'Update Product' : pending ? 'Processing...' : 'Add Product'}
+                {isEdit ? pending ? 'Processing...' : 'Update Product' : pending ? 'Processing...' : 'Add Product'}
             </button>
         </form>
     );

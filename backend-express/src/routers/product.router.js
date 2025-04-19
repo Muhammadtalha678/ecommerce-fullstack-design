@@ -1,7 +1,7 @@
 // backend/routes/product.routes.js
 import express from 'express';
 import { authenticateUser } from '../middlewares/authentication.middleware.js';
-import { addProductController,getProductController,singleProductController } from '../controllers/product.controller.js';
+import { addProductController,getProductController,singleProductController,editProductController } from '../controllers/product.controller.js';
 import { authorizeAdmin } from '../middlewares/authorizeAdmin.middleware.js';
 import { upload } from '../middlewares/upload.middleware.js';
 
@@ -15,7 +15,7 @@ const multipleUpload = upload.fields([
 routers.post('/addProduct',authenticateUser,authorizeAdmin,multipleUpload,addProductController);
 routers.get('/allProducts',getProductController)
 routers.get('/singleProduct/:prodId',singleProductController)
-// routers.get('/editProduct/:editId',authenticateUser,authorizeAdmin,editProductController)
+routers.post('/editProduct/:editId',authenticateUser,authorizeAdmin,multipleUpload,editProductController)
 
 
 export default routers;

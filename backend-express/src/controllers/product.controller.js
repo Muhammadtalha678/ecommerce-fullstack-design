@@ -3,6 +3,7 @@ import { sendResponse } from '../helpers/sendResponse.js';
 import ProductModal from '../modals/product.modal.js';
 import cloudinary from '../lib/configs/cloudinary.config.js';
 import mongoose from 'mongoose'
+import { extractPublicId } from '../helpers/extractPublicId.js';
 const addProductController = async (req, res) => {
   try {
     const files = req.files;
@@ -73,7 +74,7 @@ const singleProductController = async(req,res) => {
       return sendResponse(res, 400, true, { general: "Invalid Product ID" }, null);
     }
     const foundProduct = await ProductModal.findById(prodId)
-    console.log(prodId);
+    // console.log(prodId);
     
     if (!foundProduct) {
       return sendResponse(res, 404, true, { general: "No prouct found" }, null);
@@ -84,4 +85,76 @@ const singleProductController = async(req,res) => {
     
   }
 }
-export { addProductController,getProductController,singleProductController };
+const editProductController = async(req,res) => {
+  try {
+    const { editId } = req.params
+    if (!editId || !mongoose.Types.ObjectId.isValid(editId)) {
+      return sendResponse(res, 400, true, { general: "Invalid Product ID" }, null);
+    }
+    const foundProduct = await ProductModal.findById(editId)
+    if (!foundProduct) {
+      return sendResponse(res, 404, true, { general: "No prouct found" }, null);
+    }
+    // console.log('addProductController: Files:', files);
+    const files = req.files;
+    const {name, price, description, category, stock} = req.body
+    
+    let bannerImageUrl = foundProduct.bannerImage
+    let detailImageUrls = foundProduct.detailImages
+    // If new bannerImage is uploaded
+    if (files?.bannerImage?.length) {
+      const oldbannerImageId = extractPublicId(bannerImageUrl)
+      // delete Old banner Images
+      await cloudinary.uploader.destroy(oldbannerImageId)
+
+      const bannerImageFile = files.bannerImage[0];
+      const bannerUpload = await cloudinary.uploader.upload(
+        bannerImageFile.path,
+        { folder: 'ecommerce-internship' }
+      );
+      bannerImageUrl = bannerUpload.secure_url;
+    }
+    
+    if (files?.detailImages?.length) {
+      if (files.detailImages.length !== 4) {
+        return sendResponse(res, 400, true, {
+          detailImages: 'Exactly 4 detail images required if updating',
+        }, null);
+      }
+      const oldbannerImageIds = detailImageUrls.map((url) => extractPublicId(url))
+      await cloudinary.api.delete_all_resources(oldbannerImageIds)
+
+      const detailImagesFiles = files.detailImages;
+
+      const detailUploadPromises = detailImagesFiles.map((image) =>
+        cloudinary.uploader.upload(image.path, { folder: 'ecommerce-internship' })
+      );
+      const detailUploads = await Promise.all(detailUploadPromises);
+      detailImageUrls = detailUploads.map((upload) => upload.secure_url);
+    }
+    
+    foundProduct.updateOne({
+        name,
+        price: parseFloat(price),
+        description,
+        category,
+        stock: parseInt(stock),
+        bannerImage: bannerImageUrl,
+        etailImages: detailImageUrls,
+    })
+    
+    // console.log(prodId);
+    
+    return sendResponse(res, 200,false,{}, {message:"Product Update Successfully"});
+  } catch (error) {
+    return sendResponse(res, 500, true, { general: error.message }, null);
+    
+  }
+}
+
+const deleteProductController = async (req, res) => {
+  const { deleteId } = req.params
+  
+}
+
+export { addProductController,getProductController,singleProductController,editProductController,deleteProductController };
